@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use serde::{Serialize, Deserialize};
+mod subsonic;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -9,18 +9,15 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
-
-#[derive(Debug, Serialize, Deserialize)]
-struct ConnectionDetails {
-    host: String,
-    port: Option<i16>,
-    username: String,
-    password: String,
-}
-
 #[tauri::command]
-fn server_ping(connectionDetails: ConnectionDetails) -> String {
-    "pong".to_string()
+fn server_ping(details: subsonic::ConnectionDetails) -> Result<subsonic::PingResponseData, String> {
+  match subsonic::ping(details) {
+    Ok(response) => Ok(response),
+    Err(e) => {
+      //Create error
+      Err(e.to_string())
+    }
+  }
 }
 
 fn main() {

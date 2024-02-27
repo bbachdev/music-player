@@ -1,5 +1,5 @@
-import { Config } from '@/types/config'
-import { Dispatch, SetStateAction } from 'react'
+import { Config, Library } from '@/types/config'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { Button } from '../ui/button'
 
 import { FaFolder } from "react-icons/fa";
@@ -14,6 +14,7 @@ interface LibraryStepProps {
 }
 
 export default function LibraryStep({ config, setConfig, setStep } : LibraryStepProps) {
+  const [libraries, setLibraries] = useState<Library[]>(config.libraries)
 
   return (
     <>
@@ -41,7 +42,7 @@ export default function LibraryStep({ config, setConfig, setStep } : LibraryStep
         </Dialog>
       </div>
       
-      <Button className={`mt-8 text-lg`} onClick={() => setStep(3)}>Next</Button>
+      <Button className={`mt-6 text-lg`} onClick={() => setStep(3)} disabled={libraries.length === 0}>Next</Button>
       <p className={`mt-2 cursor-pointer underline`} onClick={() => setStep(1)}>{`< Back`}</p>
     </>
   )

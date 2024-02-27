@@ -39,10 +39,15 @@ export default function SubsonicConnectDialog() {
       username: values.username,
       password: values.password,
     }
-    const res = await invoke(`server_ping`, {connectionDetails: reqObject})
+    const res: any = await invoke(`server_ping`, { 'details': reqObject})
     console.log('Response', res)
 
     //TODO: Handle response
+    if(res.status === 'ok') {
+      console.log('Connection successful')
+    }else{
+      console.log('Connection failed')
+    }
 
     setIsConnecting(false)
   }
