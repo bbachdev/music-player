@@ -1,4 +1,5 @@
 import { useTheme } from '@/components/providers/ThemeProvider';
+import LibraryStep from '@/components/setup/LibraryStep';
 import ThemeStep from '@/components/setup/ThemeStep';
 import WelcomeStep from '@/components/setup/WelcomeStep';
 import { Config } from '@/types/config';
@@ -24,6 +25,9 @@ export default function Setup() {
       )}
       { step === 1 && (
         <ThemeStep config={config} setConfig={setConfig} setStep={setStep}/>
+      )}
+      { step === 2 && (
+        <LibraryStep config={config} setConfig={setConfig} setStep={setStep}/>
       )}
     </div>
   )

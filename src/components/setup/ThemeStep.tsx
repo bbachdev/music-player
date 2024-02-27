@@ -56,7 +56,7 @@ export default function ThemeStep({ config, setConfig, setStep } : ThemeStepProp
           </button>
         ))}
       </div>
-      <Button className={`mt-8`} onClick={() => setStep(2)}>Next</Button>
+      <Button className={`mt-8 text-lg`} onClick={() => setStep(2)}>Next</Button>
     </>
   )
 }

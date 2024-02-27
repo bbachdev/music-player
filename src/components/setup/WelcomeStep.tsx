@@ -8,8 +8,8 @@ interface WelcomeStepProps {
 export default function WelcomeStep({ setStep } : WelcomeStepProps) {
   return (
     <>
-      <h1>Welcome to Music Player!</h1>
-      <p>{`Let's configure a few things first.`}</p>
+      <h1 className={`font-semibold text-2xl mb-2`}>Welcome to Music Player!</h1>
+      <p className={`mb-4`}>{`Let's configure a few things first.`}</p>
       <Button onClick={() => setStep(1)}>Get Started</Button>
     </>
   )
