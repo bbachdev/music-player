@@ -17,6 +17,8 @@ import { Route as rootRoute } from './routes/__root'
 // Create Virtual Routes
 
 const SetupLazyImport = createFileRoute('/setup')()
+const SettingsLazyImport = createFileRoute('/settings')()
+const LibraryLazyImport = createFileRoute('/library')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
@@ -25,6 +27,16 @@ const SetupLazyRoute = SetupLazyImport.update({
   path: '/setup',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/setup.lazy').then((d) => d.Route))
+
+const SettingsLazyRoute = SettingsLazyImport.update({
+  path: '/settings',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/settings.lazy').then((d) => d.Route))
+
+const LibraryLazyRoute = LibraryLazyImport.update({
+  path: '/library',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/library.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -39,6 +51,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/library': {
+      preLoaderRoute: typeof LibraryLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/settings': {
+      preLoaderRoute: typeof SettingsLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/setup': {
       preLoaderRoute: typeof SetupLazyImport
       parentRoute: typeof rootRoute
@@ -48,6 +68,11 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([IndexLazyRoute, SetupLazyRoute])
+export const routeTree = rootRoute.addChildren([
+  IndexLazyRoute,
+  LibraryLazyRoute,
+  SettingsLazyRoute,
+  SetupLazyRoute,
+])
 
 /* prettier-ignore-end */
