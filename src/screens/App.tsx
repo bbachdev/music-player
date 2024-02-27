@@ -1,43 +1,20 @@
-import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { useEffect } from "react";
+import { exists, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { useNavigate } from '@tanstack/react-router';
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const navigate = useNavigate({ from: '/'})
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  useEffect(() => {
+    (async () => {
+      const existsResult = await exists('config.json', {baseDir: BaseDirectory.AppLocalData});
+      navigate({ to: (existsResult ? '/library' : '/setup')});
+    })();
+  }, []);
 
   return (
-    <div>
-        <h1>Welcome to Tauri!</h1>
-
-        <div className="row">
-          <a href="https://tauri.app" target="_blank">
-            <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-          </a>
-        </div>
-
-        <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-        <form
-          className="row"
-          onSubmit={(e) => {
-            e.preventDefault();
-            greet();
-          }}
-        >
-          <input
-            id="greet-input"
-            onChange={(e) => setName(e.currentTarget.value)}
-            placeholder="Enter a name..."
-          />
-          <button type="submit">Greet</button>
-        </form>
-
-        <p>{greetMsg}</p>
+    <div className={`flex`}>
+      <img className={`animate-pulse w-40 h-40 mx-auto my-auto`} src='/tauri.svg' alt='logo' />
     </div>
       
   );

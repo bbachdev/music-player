@@ -5,17 +5,10 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 export const Route = createRootRoute({
   component: () => (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <div className="p-2 flex gap-2">
-        <Link to="/" className="[&.active]:font-bold">
-          Home
-        </Link>
-        <Link to="/library" className="[&.active]:font-bold">
-          Library
-        </Link>
+      <div className={`min-h-[100vh] dark:bg-slate-800 dark:text-white`}>
+        <Outlet />
+        <TanStackRouterDevtools />
       </div>
-      <hr />
-      <Outlet />
-      <TanStackRouterDevtools />
     </ThemeProvider>
   ),
 })
