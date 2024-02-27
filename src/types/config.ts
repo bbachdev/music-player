@@ -7,7 +7,6 @@ export type Config = {
 export type Library = {
   id: string
   name: string
-  path: never
   type: `remote`
   connectionDetails: ConnectionDetails
 } | {
@@ -22,5 +21,6 @@ export type ConnectionDetails = {
   host: string
   port?: number
   username: string
-  password: string
+  md5: string
+  salt: string
 }

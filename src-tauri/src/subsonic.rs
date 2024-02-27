@@ -31,10 +31,17 @@ pub struct PingResponseData {
   open_subsonic: bool,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ServerConfig {
+  server_type: String,
+  md5_string: String,
+  salt: String,
+  open_subsonic: bool,
+}
 
 // Functions
 #[tokio::main]
-pub async fn ping(connection_details: ConnectionDetails) -> Result<PingResponseData, anyhow::Error> {
+pub async fn ping(connection_details: ConnectionDetails) -> Result<ServerConfig, anyhow::Error> {
   let salt = generate_salt();
   let md5_pass = md5::compute(connection_details.password + &salt);
 
@@ -44,8 +51,15 @@ pub async fn ping(connection_details: ConnectionDetails) -> Result<PingResponseD
     Ok(response) => {
       match response.json::<PingResponse>().await {
         Ok(res_object) => {
-          println!("{:?}", res_object);
-          Ok(res_object.response)
+          let res_data = res_object.response;
+          println!("{:?}", res_data);
+          let config = ServerConfig {
+            server_type: res_data.server_type,
+            md5_string: format!("{:x}", md5_pass),
+            salt,
+            open_subsonic: res_data.open_subsonic,
+          };
+          Ok(config)
         },
         Err(e) => {
           println!("{:?}", e);

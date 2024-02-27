@@ -6,8 +6,10 @@ import { z } from "zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import Spinner from '../ui/spinner';
+
+import { ConnectionDetails, Library } from '@/types/config';
 
 const connectSchema = z.object({
   name: z.string(),
@@ -17,7 +19,13 @@ const connectSchema = z.object({
   password: z.string(),
 })
 
-export default function SubsonicConnectDialog() {
+interface SubsonicConnectDialogProps {
+  libraries: Library[],
+  setLibraries: Dispatch<SetStateAction<Library[]>>,
+  setOpen: Dispatch<SetStateAction<boolean>>
+}
+
+export default function SubsonicConnectDialog({ libraries, setLibraries, setOpen } : SubsonicConnectDialogProps) {
   const [isConnecting, setIsConnecting] = useState(false)
 
   const form = useForm<z.infer<typeof connectSchema>>({
@@ -31,6 +39,8 @@ export default function SubsonicConnectDialog() {
   })
 
   async function onSubmit(values: z.infer<typeof connectSchema>) {
+    //TODO: Add a check to see if the library already exists
+
     setIsConnecting(true)
     //Ping server and verify connection (don't need to send up name)
     const reqObject = {
@@ -42,9 +52,27 @@ export default function SubsonicConnectDialog() {
     const res: any = await invoke(`server_ping`, { 'details': reqObject})
     console.log('Response', res)
 
-    //TODO: Handle response
-    if(res.status === 'ok') {
+    if(res.md5_string) {
       console.log('Connection successful')
+      let conn : ConnectionDetails = {
+        host: values.host,
+        port: values.port,
+        username: values.username,
+        md5: res.md5_string,
+        salt: res.salt
+      }
+
+      let serverLibrary: Library = {
+        id: values.name.toLowerCase().replace(/ /g, ''),
+        name: values.name,
+        type: 'remote',
+        connectionDetails: conn
+      }
+      console.log('Server Library', serverLibrary)
+      //Update library list
+      setLibraries([...libraries, serverLibrary])
+      setOpen(false)
+
     }else{
       console.log('Connection failed')
     }

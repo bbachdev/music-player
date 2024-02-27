@@ -10,7 +10,7 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn server_ping(details: subsonic::ConnectionDetails) -> Result<subsonic::PingResponseData, String> {
+fn server_ping(details: subsonic::ConnectionDetails) -> Result<subsonic::ServerConfig, String> {
   match subsonic::ping(details) {
     Ok(response) => Ok(response),
     Err(e) => {
