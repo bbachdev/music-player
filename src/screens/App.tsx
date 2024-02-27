@@ -1,7 +1,5 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/core";
-import { ThemeProvider } from '../components/providers/ThemeProvider';
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -13,7 +11,7 @@ function App() {
   }
 
   return (
-    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+    <div>
         <h1>Welcome to Tauri!</h1>
 
         <div className="row">
@@ -40,7 +38,7 @@ function App() {
         </form>
 
         <p>{greetMsg}</p>
-    </ThemeProvider>
+    </div>
       
   );
 }
