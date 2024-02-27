@@ -1,10 +1,13 @@
-import { DialogContent, DialogHeader } from '../ui/dialog';
+import { invoke } from "@tauri-apps/api/core"
+import { DialogClose, DialogContent, DialogHeader } from '../ui/dialog';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { useState } from 'react';
+import Spinner from '../ui/spinner';
 
 const connectSchema = z.object({
   name: z.string(),
@@ -15,6 +18,7 @@ const connectSchema = z.object({
 })
 
 export default function SubsonicConnectDialog() {
+  const [isConnecting, setIsConnecting] = useState(false)
 
   const form = useForm<z.infer<typeof connectSchema>>({
     resolver: zodResolver(connectSchema),
@@ -27,9 +31,21 @@ export default function SubsonicConnectDialog() {
   })
 
   async function onSubmit(values: z.infer<typeof connectSchema>) {
-    //TODO: Ping server and verify connection
-    console.log(values)
-  }  
+    setIsConnecting(true)
+    //Ping server and verify connection (don't need to send up name)
+    const reqObject = {
+      host: values.host,
+      port: values.port,
+      username: values.username,
+      password: values.password,
+    }
+    const res = await invoke(`server_ping`, {connectionDetails: reqObject})
+    console.log('Response', res)
+
+    //TODO: Handle response
+
+    setIsConnecting(false)
+  }
 
   return (
     <DialogContent>
@@ -91,12 +107,17 @@ export default function SubsonicConnectDialog() {
             </FormItem> 
           )} />
 
+          <div className={`mt-4 flex flex-row gap-4 items-center`}>
+            {isConnecting && (
+              <div className={`flex flex-row`}><Spinner className={`mr-4`} size={24}/><span>Testing Connection...</span></div>
+            )}
+            <DialogClose asChild>
+              <Button className={`ml-auto`} variant={`outline`}>Cancel</Button>
+            </DialogClose>
+            <Button type='submit'>Connect</Button>
+          </div>
         </form>
       </Form>
-      <div className={`mt-4 flex flex-row gap-4`}>
-        <Button className={`ml-auto`} variant={`outline`}>Cancel</Button>
-        <Button type='submit'>Connect</Button>
-      </div>
     </DialogContent>
   )
 }

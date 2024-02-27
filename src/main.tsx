@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./screens/App";
 import "./styles.css";
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 
