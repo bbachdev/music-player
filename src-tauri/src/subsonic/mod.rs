@@ -7,34 +7,34 @@ use rand::Rng;
 pub mod models;
 
 // Functions
-#[tokio::main]
-pub async fn get_artist_list(connection_details: models::ApiConnectionParams) -> Result<Vec<models::ArtistIndex>, anyhow::Error> {
-  let connection_string = connection_details.host + "/rest/getArtists.view?u=" + &connection_details.username + "&t=" + &connection_details.md5 + "&s=" + &connection_details.salt + "&v=1.16.1&c=tauri-music-player&f=json";
-  match reqwest::get(connection_string).await {
-    Ok(response) => {
-      match response.json::<models::ArtistResponseWrapper>().await {
-        Ok(res_wrapper ) => {
-          let artist_res = res_wrapper.response;
-          let res_data = artist_res.artists.index;
-          Ok(res_data)
-        },
-        Err(e) => {
-          println!("{:?}", e);
-          let mut response = HashMap::new();
-          response.insert("error".to_string(), e.to_string());
-          Err(anyhow::Error::msg(e.to_string()))
-        }
-      }
-    },
-    Err(e) => {
-      println!("{:?}", e);
-      let mut response = HashMap::new();
-      response.insert("error".to_string(), e.to_string());
-      Err(anyhow::Error::msg(e.to_string()))
-    }
+// #[tokio::main]
+// pub async fn get_artist_list(connection_details: models::ApiConnectionParams) -> Result<Vec<models::ArtistIndex>, anyhow::Error> {
+//   let connection_string = connection_details.host + "/rest/getArtists.view?u=" + &connection_details.username + "&t=" + &connection_details.md5 + "&s=" + &connection_details.salt + "&v=1.16.1&c=tauri-music-player&f=json";
+//   match reqwest::get(connection_string).await {
+//     Ok(response) => {
+//       match response.json::<models::ArtistResponseWrapper>().await {
+//         Ok(res_wrapper ) => {
+//           let artist_res = res_wrapper.response;
+//           let res_data = artist_res.artists.index;
+//           Ok(res_data)
+//         },
+//         Err(e) => {
+//           println!("{:?}", e);
+//           let mut response = HashMap::new();
+//           response.insert("error".to_string(), e.to_string());
+//           Err(anyhow::Error::msg(e.to_string()))
+//         }
+//       }
+//     },
+//     Err(e) => {
+//       println!("{:?}", e);
+//       let mut response = HashMap::new();
+//       response.insert("error".to_string(), e.to_string());
+//       Err(anyhow::Error::msg(e.to_string()))
+//     }
   
-  }
-}
+//   }
+// }
 
 
 
