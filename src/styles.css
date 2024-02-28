@@ -4,7 +4,7 @@
 
 .albumGrid {
   display: grid; /* 1 */
-  grid-template-columns: repeat(auto-fill, 100px); /* 2 */
-  grid-gap: 1rem; /* 3 */
+  grid-template-columns: repeat(auto-fill, 140px); /* 2 */
+  grid-gap: .8rem; /* 3 */
   justify-content: space-between; /* 4 */
 }

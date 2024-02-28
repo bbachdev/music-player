@@ -9,7 +9,7 @@ interface ArtistSectionProps {
 }
 
 export default function ArtistSection({ libraries } : ArtistSectionProps) {
-  const { isPending, error, data: artistList } = useQuery({queryKey: ['artistList'], queryFn: () => getArtistList(libraries), refetchOnMount: false})
+  const { isPending, error, data: artistList } = useQuery({queryKey: ['artistList'], queryFn: () => getArtistList(libraries), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
 
   if (isPending) return <div>Loading...</div>
 
