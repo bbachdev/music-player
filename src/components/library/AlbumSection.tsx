@@ -1,6 +1,10 @@
 import { ScrollArea } from '../ui/scroll-area'
 
-export default function AlbumSection() {
+interface AlbumSectionProps {
+  selectedArtist?: string
+}
+
+export default function AlbumSection({ selectedArtist } : AlbumSectionProps) {
 
   //TODO: Temp - to remove
   const albums = []

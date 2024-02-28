@@ -34,7 +34,7 @@ export default function Setup() {
   }
 
   return (
-    <div className={`m-auto w-full flex flex-col text-center`}>
+    <div className={`m-auto flex flex-col text-center`}>
       <img className={`w-40 h-40 mx-auto my-auto mb-6`} src='/tauri.svg' alt='logo' />
       {step === 0 && (
         <WelcomeStep setStep={setStep}/>

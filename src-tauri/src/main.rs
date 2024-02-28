@@ -10,8 +10,19 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn server_ping(details: subsonic::ConnectionDetails) -> Result<subsonic::ServerConfig, String> {
+fn server_ping(details: subsonic::models::ConnectionDetails) -> Result<subsonic::models::ServerConfig, String> {
   match subsonic::ping(details) {
+    Ok(response) => Ok(response),
+    Err(e) => {
+      //Create error
+      Err(e.to_string())
+    }
+  }
+}
+
+#[tauri::command]
+fn get_artists(details: subsonic::models::ApiConnectionParams) -> Result<Vec<subsonic::models::ArtistIndex>, String> {
+  match subsonic::get_artist_list(details) {
     Ok(response) => Ok(response),
     Err(e) => {
       //Create error
@@ -24,8 +35,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet])
-        .invoke_handler(tauri::generate_handler![server_ping])
+        .invoke_handler(tauri::generate_handler![server_ping, get_artists])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
