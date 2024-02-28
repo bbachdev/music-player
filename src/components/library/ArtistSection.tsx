@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react'
 import { ScrollArea } from '../ui/scroll-area'
-import { invoke } from '@tauri-apps/api/core'
 import { Library } from '@/types/config'
-import { QueryClient, QueryClientProvider, useQuery} from '@tanstack/react-query'
+import { useQuery} from '@tanstack/react-query'
 import { getArtistList } from '@/util/subsonic'
 import { AlbumArtist } from '@/types/metadata'
 
