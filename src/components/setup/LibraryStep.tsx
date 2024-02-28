@@ -18,6 +18,16 @@ export default function LibraryStep({ config, setConfig, setStep } : LibraryStep
   const [libraries, setLibraries] = useState<Library[]>(config.libraries)
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  function saveLibraryConfig() {
+    setConfig((prev) => {
+      return {
+        ...prev,
+        libraries: libraries
+      }
+    })
+    setStep(3)
+  }
+
   return (
     <>
       <h1 className={`font-semibold text-2xl mb-2`}>Add Your Music Library</h1>
@@ -67,7 +77,7 @@ export default function LibraryStep({ config, setConfig, setStep } : LibraryStep
         </Dialog>
       </div>
       
-      <Button className={`mt-6 text-lg`} onClick={() => setStep(3)} disabled={libraries.length === 0}>Next</Button>
+      <Button className={`mt-6 text-lg`} onClick={saveLibraryConfig} disabled={libraries.length === 0}>Next</Button>
       <p className={`mt-2 cursor-pointer underline`} onClick={() => setStep(1)}>{`< Back`}</p>
     </>
   )

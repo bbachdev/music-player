@@ -2,6 +2,7 @@ export type Config = {
   theme: `light` | `dark`
   accentColor: string
   libraries: Library[]
+  discordRichPresence: boolean
 }
 
 export type Library = {

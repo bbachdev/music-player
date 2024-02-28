@@ -13,7 +13,7 @@ function App() {
   }, []);
 
   return (
-    <div className={`flex`}>
+    <div className={`flex w-full`}>
       <img className={`animate-pulse w-40 h-40 mx-auto my-auto`} src='/tauri.svg' alt='logo' />
     </div>
       

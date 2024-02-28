@@ -31,10 +31,7 @@ export default function SubsonicConnectDialog({ libraries, setLibraries, setOpen
   const form = useForm<z.infer<typeof connectSchema>>({
     resolver: zodResolver(connectSchema),
     defaultValues: {
-      name: "",
-      host: "",
-      username: "",
-      password: "",
+
     },
   })
 
