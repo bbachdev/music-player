@@ -19,6 +19,5 @@ export default function ArtistSection() {
         </ScrollArea>
       </div>
     </div>
-    
   )
 }
