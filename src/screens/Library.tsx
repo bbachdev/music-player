@@ -59,7 +59,7 @@ export default function Library() {
             </ResizablePanel>
 
           </ResizablePanelGroup>
-          <NowPlaying/>
+          <NowPlaying libraries={config!.libraries} nowPlaying={nowPlaying} playQueue={playQueue} setNowPlaying={setNowPlaying}/>
         </>
       )}      
     </div>

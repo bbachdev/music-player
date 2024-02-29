@@ -67,3 +67,22 @@ export async function getAlbumDetail(libraries: Library[], albumId: string) : Pr
   console.log("Song List: ", songList)
   return songList;
 }
+
+export async function stream(song: Song, libraries: Library[]) : Promise<string | undefined> {
+  //TODO: Rewrite to get around multiple libraries
+
+  let host = '';
+  let connectionString = '';
+
+  let library = libraries[0];
+
+  if (library.type === 'local') return;
+
+  host = library.connectionDetails.host + (library.connectionDetails.port ? `:${library.connectionDetails.port}` : '');
+  connectionString = `${host}/rest/stream.view?id=${song.id}&u=${library.connectionDetails.username}&t=${library.connectionDetails.md5}&s=${library.connectionDetails.salt}&v=1.16.1&c=tauri&f=json`;
+
+  const res = await fetch(connectionString);
+  const data = await res.arrayBuffer()
+
+  return URL.createObjectURL(new Blob([data], {type: song.contentType}));
+}
