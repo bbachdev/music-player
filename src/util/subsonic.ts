@@ -1,5 +1,7 @@
 import { Library } from '@/types/config';
 import { AlbumArtist, Album, Song } from '@/types/metadata';
+import { BaseDirectory, mkdir, exists } from '@tauri-apps/plugin-fs';
+import { getAlbumCovers } from '@/util/musicinfo';
 
 export async function getArtistList(libraries: Library[]) : Promise<AlbumArtist[]> {
   const artistList: AlbumArtist[] = []
@@ -43,6 +45,9 @@ export async function getAlbumList(libraries: Library[]) : Promise<Album[]> {
       albumList.push(album);
     });
   }));
+
+  //If cover art directory doesn't exist, create it and populate it
+  getAlbumCovers(libraries, albumList);
 
   console.log("Album List: ", albumList)
   return albumList;

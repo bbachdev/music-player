@@ -10,6 +10,9 @@ import { IoIosSkipForward } from "react-icons/io";
 import { PiQueueFill } from "react-icons/pi";
 import { FaVolumeUp } from "react-icons/fa";
 import { FaVolumeMute } from "react-icons/fa";
+import CoverArt from './CoverArt';
+import { convertFileSrc } from '@tauri-apps/api/core';
+import Spinner from '../ui/spinner';
 
 const DEFAULT_VOLUME = 65;
 //Progress color for input range sliders
@@ -20,15 +23,17 @@ interface NowPlayingProps {
   nowPlaying: Song | undefined
   setNowPlaying: Dispatch<SetStateAction<Song | undefined>>
   playQueue: Song[] | undefined
+  coverArtPath: string
 }
 
-export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQueue }: NowPlayingProps) {
+export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQueue, coverArtPath }: NowPlayingProps) {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState('0:00');
   const [duration, setDuration] = useState('0:00');
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
   const [savedVolume, setSavedVolume] = useState(DEFAULT_VOLUME);
+  const [songLoading, setSongLoading] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
@@ -38,6 +43,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
     //Call stream endpoint, and set audio source to the stream
     async function loadAudio() {
       if(nowPlaying){
+        setSongLoading(true)
         if(audioRef.current){
           let audioData = await stream(nowPlaying, libraries)
           if(audioData) {
@@ -45,9 +51,11 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
             audioRef.current.load()
             audioRef.current.play()
             setIsPlaying(true)
+            setSongLoading(false)
             //Set scrobble
           }else{
             console.log('Error loading audio')
+            setSongLoading(false)
           }
         }
       }
@@ -185,7 +193,12 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
         Your browser does not support the audio element.
       </audio>
       <div className={`p-4 flex flex-row dark:bg-slate-800 border-t-2 dark:border-white items-center`}>
-        <img src="https://via.placeholder.com/56" alt="album cover" className={`w-14 h-14`} />
+        <div className={`relative`}>
+          {songLoading && <Spinner className={`absolute left-[10px] top-[10px] z-50`} />}
+          {songLoading && <div className={`absolute bg-slate-800/80 h-14 w-14`}></div>}
+          <CoverArt className={`w-14 h-14`} src={convertFileSrc(`${coverArtPath}/${nowPlaying?.albumId}.png`)} fallbackSrc={"https://via.placeholder.com/56"} alt="album cover" />
+        </div>
+        
         <div className={`flex flex-col flex-1`}>
           <p className={`pl-4 font-semibold text-lg`}>{nowPlaying?.title}</p>
           <p className={`pl-4 text-sm text-slate-200`}>{nowPlaying?.artist}</p>

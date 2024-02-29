@@ -7,10 +7,12 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Config } from '@/types/config';
 import { Song } from '@/types/metadata';
 import { getAlbumDetail } from '@/util/subsonic';
+import { appLocalDataDir } from '@tauri-apps/api/path';
 import { readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { useEffect, useState } from 'react';
 
 export default function Library() {
+  const [coverArtPath, setCoverArtPath] = useState<string>('')
   const [config, setConfig] = useState<Config>();
   const [songList, setSongList] = useState<Song[]>([]);
   const [playQueue, setPlayQueue] = useState<Song[] | undefined>(undefined);
@@ -23,6 +25,17 @@ export default function Library() {
     }
 
     getConfig()
+  }, [])
+
+  useEffect(() => {
+    async function getCoverArtPath() {
+      if(!coverArtPath){
+        let path = await appLocalDataDir() + '/cover_art'
+        console.log('Cover Art Path: ', path)
+        setCoverArtPath(path)
+      }
+    }
+    getCoverArtPath()
   }, [])
 
   async function selectAlbum(albumId: string) {
@@ -49,7 +62,7 @@ export default function Library() {
             <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>
 
             <ResizablePanel minSize={20} defaultSize={60}>
-              <AlbumSection libraries={config!.libraries} onAlbumSelected={selectAlbum}/>
+              <AlbumSection libraries={config!.libraries} onAlbumSelected={selectAlbum} coverArtPath={coverArtPath}/>
             </ResizablePanel>
 
             <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>
@@ -59,7 +72,7 @@ export default function Library() {
             </ResizablePanel>
 
           </ResizablePanelGroup>
-          <NowPlaying libraries={config!.libraries} nowPlaying={nowPlaying} playQueue={playQueue} setNowPlaying={setNowPlaying}/>
+          <NowPlaying libraries={config!.libraries} nowPlaying={nowPlaying} playQueue={playQueue} setNowPlaying={setNowPlaying} coverArtPath={coverArtPath}/>
         </>
       )}      
     </div>
