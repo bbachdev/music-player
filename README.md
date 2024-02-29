@@ -2,6 +2,7 @@
 
 ![Music Player Library Screen](preview.png)
 
+## Summary
 "Music Player" is a desktop music player that is built to support playback from Subsonic-compatible servers, as well as a user's local music directories (local music functionality is still a WIP).
 
 ## Tech Stack
