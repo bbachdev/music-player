@@ -57,7 +57,7 @@ export default function Library() {
           <ResizablePanelGroup direction="horizontal">
 
             <ResizablePanel minSize={20}>
-              <ArtistSection setSelectedArtist={setSelectedArtist} libraries={config!.libraries} />
+              <ArtistSection selectedArtist={selectedArtist} setSelectedArtist={setSelectedArtist} libraries={config!.libraries} />
             </ResizablePanel>
 
             <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>
