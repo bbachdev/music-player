@@ -47,9 +47,40 @@ export async function getAlbumList(libraries: Library[]) : Promise<Album[]> {
   }));
 
   //If cover art directory doesn't exist, create it and populate it
-  getAlbumCovers(libraries, albumList);
+  getAlbumCovers(libraries, albumList, true);
 
   console.log("Album List: ", albumList)
+  return albumList;
+}
+
+export async function getAlbumsForArtist(libraries: Library[], artistId: string) : Promise<Album[]> {
+  const albumList: Album[] = []
+  await Promise.all(libraries.map(async (library) => {
+    if (library.type === 'local') return;
+
+    let host = library.connectionDetails.host + (library.connectionDetails.port ? `:${library.connectionDetails.port}` : '');
+    let connectionString = `${host}/rest/getArtist.view?id=${artistId}&u=${library.connectionDetails.username}&t=${library.connectionDetails.md5}&s=${library.connectionDetails.salt}&v=1.16.1&c=tauri&f=json`;
+
+    const res = await fetch(connectionString);
+    const data = await res.json();
+
+    data['subsonic-response'].artist.album.forEach((album: any) => {
+      albumList.push(album);
+    });
+  }));
+
+  //If art doesn't exists for the albums, get them
+  let coversToRetrieve = albumList.filter(async (album) => {
+    let artExists = await exists(`cover_art/${album.id}.png`, {baseDir: BaseDirectory.AppLocalData});
+    return !artExists;
+  });
+
+  if (coversToRetrieve.length > 0) {
+    console.log("Covers to Retrieve: ", coversToRetrieve)
+    getAlbumCovers(libraries, coversToRetrieve, false);
+  }
+
+  console.log("Artist Albums: ", albumList)
   return albumList;
 }
 

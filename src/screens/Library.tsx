@@ -16,6 +16,7 @@ export default function Library() {
   const [config, setConfig] = useState<Config>();
   const [songList, setSongList] = useState<Song[]>([]);
   const [playQueue, setPlayQueue] = useState<Song[] | undefined>(undefined);
+  const [selectedArtist, setSelectedArtist] = useState<string | undefined>(undefined);
   const [nowPlaying, setNowPlaying] = useState<Song | undefined>(undefined);
 
   useEffect(() => {
@@ -56,13 +57,13 @@ export default function Library() {
           <ResizablePanelGroup direction="horizontal">
 
             <ResizablePanel minSize={20}>
-              <ArtistSection libraries={config!.libraries} />
+              <ArtistSection setSelectedArtist={setSelectedArtist} libraries={config!.libraries} />
             </ResizablePanel>
 
             <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>
 
             <ResizablePanel minSize={20} defaultSize={60}>
-              <AlbumSection libraries={config!.libraries} onAlbumSelected={selectAlbum} coverArtPath={coverArtPath}/>
+              <AlbumSection selectedArtist={selectedArtist} libraries={config!.libraries} onAlbumSelected={selectAlbum} coverArtPath={coverArtPath}/>
             </ResizablePanel>
 
             <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>

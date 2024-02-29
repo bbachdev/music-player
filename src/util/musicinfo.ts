@@ -5,10 +5,10 @@ import { Library } from '@/types/config';
 
 const CONCURRENCY_LIMIT = 20
 
-export async function getAlbumCovers(libraries: Library[], albums: Album[]) : Promise<boolean> {
+export async function getAlbumCovers(libraries: Library[], albums: Album[], full: boolean) : Promise<boolean> {
   try{
     let artDirectoryExists = await exists('cover_art', {baseDir: BaseDirectory.AppLocalData})
-    if(!artDirectoryExists) {
+    if(!full || !artDirectoryExists) {
       //TODO: Look to display a loading indicator for album section
       let albumChunks: Album[] = []
 
@@ -29,7 +29,9 @@ export async function getAlbumCovers(libraries: Library[], albums: Album[]) : Pr
       })).then(async () => {
         console.log('Cover Map: ', coverMap)
 
-        await mkdir('cover_art', {baseDir: BaseDirectory.AppLocalData})
+        if(full === true) {
+          await mkdir('cover_art', {baseDir: BaseDirectory.AppLocalData})
+        }   
         await Promise.all([...coverMap].map(async ([key, value]) => {
           await writeFile(`cover_art/${key}.png`, new Uint8Array(value), {baseDir: BaseDirectory.AppLocalData})
         }))
