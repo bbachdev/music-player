@@ -5,9 +5,10 @@ interface AlbumArtProps {
   src: string
   fallbackSrc: string
   alt: string
+  style?: React.CSSProperties | undefined
 }
 
-export default function CoverArt({ className = '', src, fallbackSrc, alt} : AlbumArtProps) {
+export default function CoverArt({ className = '', src, fallbackSrc, alt, style} : AlbumArtProps) {
   const [imageSrc, setImageSrc] = useState(src);
 
   const handleImageError = (e: SyntheticEvent<HTMLImageElement, Event>) => {
@@ -22,7 +23,7 @@ export default function CoverArt({ className = '', src, fallbackSrc, alt} : Albu
 
   return (
     <>
-      <img className={className} src={imageSrc} alt={alt} onError={(e) => handleImageError(e)} />
+      <img className={className} src={imageSrc} alt={alt} onError={(e) => handleImageError(e)} style={style} />
     </>
   )
 }

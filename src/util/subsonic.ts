@@ -80,6 +80,13 @@ export async function getAlbumsForArtist(libraries: Library[], artistId: string)
     getAlbumCovers(libraries, coversToRetrieve, false);
   }
 
+  //Sort by year
+  albumList.sort((a, b) => {
+    if (a.year > b.year) return -1;
+    if (a.year < b.year) return 1;
+    return 0;
+  });
+
   console.log("Artist Albums: ", albumList)
   return albumList;
 }
