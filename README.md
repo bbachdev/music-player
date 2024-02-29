@@ -1,7 +1,9 @@
-# Tauri + React + Typescript
+# Music Player
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+![Music Player Library Screen](preview.png)
 
-## Recommended IDE Setup
+"Music Player" is a desktop music player that is built to support playback from Subsonic-compatible servers, as well as a user's local music directories (local music functionality is still a WIP)
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## Tech Stack
+![Tech Stack](https://skillicons.dev/icons?i=tauri,react,vite,tailwind)
+

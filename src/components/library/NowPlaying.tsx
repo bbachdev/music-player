@@ -52,7 +52,8 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
             audioRef.current.play()
             setIsPlaying(true)
             setSongLoading(false)
-            //Set scrobble
+            //TODO: Set scrobble
+            
           }else{
             console.log('Error loading audio')
             setSongLoading(false)
