@@ -58,7 +58,6 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
             audioRef.current.play()
             setIsPlaying(true)
             setSongLoading(false)
-            //TODO: Set scrobble
             scrobble(nowPlaying.id, libraries)
 
             //TODO: Move to helper function + file 
