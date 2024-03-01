@@ -39,7 +39,7 @@ export default function SongSection({ songs, setPlayQueue, setNowPlaying } : Son
               return (
                 <button key={song.id} className={`p-2 py-1 text-left dark:hover:bg-slate-700/90`} onClick={() => playSong(song)}>
                   <div className={`p-1 flex flex-row`}>
-                    <span className={`text-xl w-6 mr-4`}>{song.track}</span>
+                    <span className={`text-xl w-5 mr-4`}>{song.track}</span>
                     <div className={`flex flex-col`}>
                       <span className={`text-md`}>{song.title}</span>
                       <span className={`text-xs dark:text-slate-200/90`}>{song.artist}</span>
