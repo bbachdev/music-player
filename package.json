@@ -35,6 +35,7 @@
     "react-icons": "^5.0.1",
     "react-resizable-panels": "^2.0.11",
     "react-spinners": "^0.13.8",
+    "react-virtuoso": "^4.7.1",
     "tailwind-merge": "^2.2.1",
     "zod": "^3.22.4"
   },

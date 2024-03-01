@@ -52,7 +52,7 @@ export async function getAlbumList(libraries: Library[]) : Promise<Album[]> {
 }
 
 export async function getAlbumsForArtist(libraries: Library[], artistId: string) : Promise<Album[]> {
-  const albumList: Album[] = []
+  let albumList: Album[] = []
   await Promise.all(libraries.map(async (library) => {
     if (library.type === 'local') return;
 
@@ -83,8 +83,8 @@ export async function getAlbumsForArtist(libraries: Library[], artistId: string)
   }
 
   //Sort by year
-  albumList.sort((a, b) => {
-    if (a.year > b.year) return -1;
+  albumList = albumList.sort((a, b) => {
+    if (!b.year || a.year > b.year) return -1;
     if (a.year < b.year) return 1;
     return 0;
   });
