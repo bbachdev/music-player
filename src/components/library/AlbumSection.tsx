@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ScrollArea } from '../ui/scroll-area'
 import { getAlbumList, getAlbumsForArtist } from '@/util/subsonic'
 import { Library } from '@/types/config'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import CoverArt from '@/components/library/CoverArt'
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { Album } from '@/types/metadata'
@@ -12,9 +12,10 @@ interface AlbumSectionProps {
   libraries: Library[]
   onAlbumSelected: (albumId: string) => void
   coverArtPath: string
+  setSelectedAlbumArtist: Dispatch<SetStateAction<string | undefined>>
 }
 
-export default function AlbumSection({ selectedArtist, libraries, onAlbumSelected, coverArtPath } : AlbumSectionProps) {
+export default function AlbumSection({ selectedArtist, libraries, onAlbumSelected, coverArtPath, setSelectedAlbumArtist } : AlbumSectionProps) {
   const [filteredAlbumList, setFilteredAlbumList] = useState<Album[]>([])
   const [selectedAlbum, setSelectedAlbum] = useState<string | undefined>(undefined)
   const { isPending, error, data: albums } = useQuery({queryKey: ['albumList'], queryFn: () => getAlbumList(libraries), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
@@ -35,9 +36,10 @@ export default function AlbumSection({ selectedArtist, libraries, onAlbumSelecte
 
   if (error) return <div>Error: {error.message}</div>
 
-  function albumSelected(albumId: string) {
-    setSelectedAlbum(albumId)
-    onAlbumSelected(albumId)
+  function albumSelected(album: Album) {
+    setSelectedAlbum(album.id)
+    setSelectedAlbumArtist(album.artist)
+    onAlbumSelected(album.id)
   }
 
   return (
@@ -51,7 +53,7 @@ export default function AlbumSection({ selectedArtist, libraries, onAlbumSelecte
               <>
                 {filteredAlbumList.map((album) => {
                   return (
-                    <button key={album.id} className={`w-fit dark:hover:bg-slate-700/90 test-left ${selectedAlbum === album.id ? 'bg-slate-700/90' : ''}`} onClick={() => albumSelected(album.id)}>
+                    <button key={album.id} className={`w-fit dark:hover:bg-slate-700/90 test-left ${selectedAlbum === album.id ? 'bg-slate-700/90' : ''}`} onClick={() => albumSelected(album)}>
                       <CoverArt src={convertFileSrc(`${coverArtPath}/${album.id}.png`)} fallbackSrc={"https://via.placeholder.com/140"} alt="album cover" style={{ height: '140px', width: '140px' }}/>
                       <div className={`flex flex-col`}>
                         <p className={`px-1 font-semibold text-sm line-clamp-1 break-all`}>{album.title}</p>
@@ -67,7 +69,7 @@ export default function AlbumSection({ selectedArtist, libraries, onAlbumSelecte
               <>
                 {albums.map((album) => {
                 return (
-                  <button key={album.id} className={`w-fit dark:hover:bg-slate-700/90 test-left ${selectedAlbum === album.id ? 'bg-slate-700/90' : ''}`} onClick={() => albumSelected(album.id)}>
+                  <button key={album.id} className={`w-fit dark:hover:bg-slate-700/90 test-left ${selectedAlbum === album.id ? 'bg-slate-700/90' : ''}`} onClick={() => albumSelected(album)}>
                     <CoverArt src={convertFileSrc(`${coverArtPath}/${album.id}.png`)} fallbackSrc={"https://via.placeholder.com/140"} alt="album cover" style={{ height: '140px', width: '140px' }}/>
                     <div className={`flex flex-col`}>
                       <p className={`px-1 font-semibold text-sm line-clamp-1 break-all`}>{album.title}</p>

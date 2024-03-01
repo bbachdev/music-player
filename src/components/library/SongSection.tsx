@@ -1,14 +1,17 @@
 import { Song } from '@/types/metadata'
 import { ScrollArea } from '../ui/scroll-area'
 import { useEffect, useState } from 'react'
+import { CgLoadbarSound } from "react-icons/cg";
 
 interface SongSectionProps {
   songs: Song[]
   setPlayQueue: (songs: Song[]) => void
   setNowPlaying: (song: Song) => void
+  nowPlaying: Song | undefined
+  selectedAlbumArtist: string | undefined
 }
 
-export default function SongSection({ songs, setPlayQueue, setNowPlaying } : SongSectionProps) {
+export default function SongSection({ songs, setPlayQueue, setNowPlaying, nowPlaying, selectedAlbumArtist } : SongSectionProps) {
   const [header, setHeader] = useState('Songs')
   const [subHeader, setSubHeader] = useState('')
 
@@ -16,7 +19,9 @@ export default function SongSection({ songs, setPlayQueue, setNowPlaying } : Son
     if(songs.length > 0){
       setHeader(songs[0].album)
       //TODO: Use album artist instead (pull in from album object)
-      setSubHeader(songs[0].artist)
+      if(selectedAlbumArtist) {
+        setSubHeader(selectedAlbumArtist)
+      }
     }
   }, [songs])
 
@@ -37,13 +42,14 @@ export default function SongSection({ songs, setPlayQueue, setNowPlaying } : Son
           <div className={`flex flex-col text-left`}>
             {songs.map((song) => {
               return (
-                <button key={song.id} className={`p-2 py-1 text-left dark:hover:bg-slate-700/90`} onClick={() => playSong(song)}>
+                <button key={song.id} className={`p-2 py-1 text-left dark:hover:bg-slate-700/90 ${nowPlaying?.id === song.id ? 'bg-slate-700/90' : '' }`} onClick={() => playSong(song)}>
                   <div className={`p-1 flex flex-row`}>
                     <span className={`text-xl w-5 mr-4`}>{song.track}</span>
                     <div className={`flex flex-col`}>
                       <span className={`text-md`}>{song.title}</span>
                       <span className={`text-xs dark:text-slate-200/90`}>{song.artist}</span>
                     </div>
+                    {nowPlaying?.id === song.id && <span className={`ml-auto mr-8 self-center`}><CgLoadbarSound size={32}/></span>}
                   </div>
                 </button>
               )

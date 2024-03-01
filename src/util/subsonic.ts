@@ -27,8 +27,6 @@ export async function getAlbumList(libraries: Library[]) : Promise<Album[]> {
   await Promise.all(libraries.map(async (library) => {
     if (library.type === 'local') return;
 
-    //TODO: Add artist filter
-
     let offset = 0
 
     let host = library.connectionDetails.host + (library.connectionDetails.port ? `:${library.connectionDetails.port}` : '');
@@ -70,10 +68,14 @@ export async function getAlbumsForArtist(libraries: Library[], artistId: string)
   }));
 
   //If art doesn't exists for the albums, get them
-  let coversToRetrieve = albumList.filter(async (album) => {
-    let artExists = await exists(`cover_art/${album.id}.png`, {baseDir: BaseDirectory.AppLocalData});
-    return !artExists;
-  });
+  let coverChecks = await Promise.all(albumList.map(async (album) => {
+    let artExists = await exists(`cover_art/${album.id}.png`, { baseDir: BaseDirectory.AppLocalData });
+    console.log("Art exists? ", artExists)
+    return { album, artExists };
+  }));
+
+  let coversToRetrieve = coverChecks.filter(({ artExists }) => artExists === false).map(({ album }) => album);
+
 
   if (coversToRetrieve.length > 0) {
     console.log("Covers to Retrieve: ", coversToRetrieve)
