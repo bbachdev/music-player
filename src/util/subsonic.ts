@@ -131,3 +131,17 @@ export async function stream(song: Song, libraries: Library[]) : Promise<string 
 
   return URL.createObjectURL(new Blob([data], {type: song.contentType}));
 }
+
+export async function scrobble(songId: string, libraries: Library[]) : Promise<boolean> {
+  let library = libraries[0];
+
+  if (library.type === 'local') return false;
+
+  let host = library.connectionDetails.host + (library.connectionDetails.port ? `:${library.connectionDetails.port}` : '');
+  let connectionString = `${host}/rest/scrobble.view?id=${songId}&u=${library.connectionDetails.username}&t=${library.connectionDetails.md5}&s=${library.connectionDetails.salt}&v=1.16.1&c=tauri&f=json`;
+
+  const res = await fetch(connectionString);
+  const data = await res.json()
+
+  return data['subsonic-response'].status === 'ok';
+}

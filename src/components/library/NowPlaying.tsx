@@ -1,6 +1,6 @@
 import { Library } from '@/types/config';
 import { Song } from '@/types/metadata';
-import { stream } from '@/util/subsonic';
+import { scrobble, stream } from '@/util/subsonic';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import { FaCirclePlay } from "react-icons/fa6";
@@ -59,6 +59,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
             setIsPlaying(true)
             setSongLoading(false)
             //TODO: Set scrobble
+            scrobble(nowPlaying.id, libraries)
 
             //TODO: Move to helper function + file 
             //Grab binary data for surrounding songs in queue
