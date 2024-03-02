@@ -35,11 +35,9 @@ export default function ArtistSection({ selectedArtist, setSelectedArtist, libra
         <h2 className={`p-2`}>Artists</h2>
         <ScrollArea className={`w-full`}>
           <div className={`flex flex-col text-left`}>
-              {/* {artistList.map((artist: AlbumArtist) => {
-              return <button key={artist.name} className={`dark:hover:bg-slate-700/90 text-left p-2 ${selectedArtist === artist.id ? 'bg-slate-700/90' : ''}`} onClick={(e) => handleClick(e, artist.id)}><span className={`p-1`}>{artist.name}</span></button> */}
-              <Virtuoso style={{height: '100%', width: '100%'}} data={artistList} itemContent={(_index, artist) => (
-                <button key={artist.name} className={`w-full dark:hover:bg-slate-700/90 text-left p-2 ${selectedArtist === artist.id ? 'bg-slate-700/90' : ''}`} onClick={(e) => handleClick(e, artist.id)}><span className={`p-1`}>{artist.name}</span></button>
-              )}/>
+              {artistList.map((artist: AlbumArtist) => {
+              return <button key={artist.name} className={`dark:hover:bg-slate-700/90 text-left p-2 ${selectedArtist === artist.id ? 'bg-slate-700/90' : ''}`} onClick={(e) => handleClick(e, artist.id)}><span className={`p-1`}>{artist.name}</span></button>
+            })}
           </div>
           
         </ScrollArea>

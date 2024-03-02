@@ -17,6 +17,7 @@ export async function getArtistList(libraries: Library[]) : Promise<AlbumArtist[
     data['subsonic-response'].artists.index.forEach((artistIndex: any) => {
       artistList.push(...artistIndex.artist);
     });
+    
   }));
 
   return artistList;
