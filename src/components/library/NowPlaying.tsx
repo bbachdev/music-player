@@ -7,12 +7,12 @@ import { FaCirclePlay } from "react-icons/fa6";
 import { FaCirclePause } from "react-icons/fa6";
 import { IoIosSkipBackward } from "react-icons/io";
 import { IoIosSkipForward } from "react-icons/io";
-import { PiQueueFill } from "react-icons/pi";
 import { FaVolumeUp } from "react-icons/fa";
 import { FaVolumeMute } from "react-icons/fa";
 import CoverArt from './CoverArt';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import Spinner from '../ui/spinner';
+import QueueMenu from './QueueMenu';
 
 const DEFAULT_VOLUME = 65;
 //Progress color for input range sliders
@@ -233,6 +233,10 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
       ref.current.style.background = `linear-gradient(to right, ${PROGRESS_COLOR} ${sliderValue}%, #ccc ${sliderValue}%)`;
     }
   }
+
+  const queueSongSelected = (song: Song) => {
+    setNowPlaying(song)
+  }
   
   return (
     <>
@@ -242,7 +246,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
       </audio>
       <div className={`flex flex-col dark:bg-slate-800 border-t-2 dark:border-white`}>
         <div className={'ml-2 flex cursor-pointer'}>
-            <input className={'w-full'} ref={progressRef} type="range" defaultValue={0} onChange={(e) => seek(e)} onInput={() => updateProgress(progressRef)}/>
+            <input className={'w-full'} ref={progressRef} type="range" step={`any`} defaultValue={0} onChange={(e) => seek(e)} onInput={() => updateProgress(progressRef)}/>
         </div>
         <div className={`p-4 pt-2 flex flex-row items-center`}>
           <div className={`relative`}>
@@ -271,7 +275,8 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
                 </div>
                 <input className={`cursor-pointer`} ref={volumeRef} type="range" defaultValue={volume} min={0} max={100} step={1} onChange={(e) => changeVolume(Number(e.target.value))} onInput={() => updateProgress(volumeRef)}/>
               </div>
-            <button className={`p-2 dark:hover:text-slate-200`}><PiQueueFill size={36} /></button>
+            {/* <button className={`p-2 dark:hover:text-slate-200`} onClick={toggleQueueDisplay}><PiQueueFill size={36} /></button> */}
+            <QueueMenu onSongSelected={queueSongSelected} nowPlayingId={nowPlaying?.id} coverArtPath={coverArtPath} queue={playQueue} />
           </div>
         </div>
       </div>
