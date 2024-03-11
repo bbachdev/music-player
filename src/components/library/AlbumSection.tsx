@@ -53,7 +53,7 @@ export default function AlbumSection({ selectedArtist, libraries, onAlbumSelecte
               <>
                 {filteredAlbumList.map((album) => {
                   return (
-                    <button key={album.id} className={`w-fit dark:hover:bg-slate-700/90 test-left ${selectedAlbum === album.id ? 'bg-slate-700/90' : ''}`} onClick={() => albumSelected(album)}>
+                    <button key={album.id} className={`w-fit dark:hover:bg-slate-700/90 ${selectedAlbum === album.id ? 'bg-slate-700/90' : ''}`} onClick={() => albumSelected(album)}>
                       <CoverArt src={convertFileSrc(`${coverArtPath}/${album.id}.png`)} fallbackSrc={"https://via.placeholder.com/140"} alt="album cover" style={{ height: '140px', width: '140px' }}/>
                       <div className={`flex flex-col`}>
                         <p className={`px-1 font-semibold text-sm line-clamp-1 break-all`}>{album.title}</p>
@@ -69,7 +69,7 @@ export default function AlbumSection({ selectedArtist, libraries, onAlbumSelecte
               <>
                 {albums.map((album) => {
                 return (
-                  <button key={album.id} className={`w-fit dark:hover:bg-slate-700/90 test-left ${selectedAlbum === album.id ? 'bg-slate-700/90' : ''}`} onClick={() => albumSelected(album)}>
+                  <button key={album.id} className={`w-fit dark:hover:bg-slate-700/90 ${selectedAlbum === album.id ? 'bg-slate-700/90' : ''}`} onClick={() => albumSelected(album)}>
                     <CoverArt src={convertFileSrc(`${coverArtPath}/${album.id}.png`)} fallbackSrc={"https://via.placeholder.com/140"} alt="album cover" style={{ height: '140px', width: '140px' }}/>
                     <div className={`flex flex-col`}>
                       <p className={`px-1 font-semibold text-sm line-clamp-1 break-all`}>{album.title}</p>
