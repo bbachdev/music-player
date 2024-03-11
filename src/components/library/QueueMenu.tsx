@@ -5,6 +5,7 @@ import { DropdownMenuContent } from '../ui/dropdown-menu';
 import { Song } from '@/types/metadata';
 import CoverArt from './CoverArt';
 import { convertFileSrc } from '@tauri-apps/api/core';
+import { ScrollArea } from '../ui/scroll-area';
 
 interface QueueMenuProps {
   nowPlayingId: string | undefined
@@ -20,22 +21,24 @@ export default function QueueMenu({ nowPlayingId, coverArtPath, queue, onSongSel
       <DropdownMenuTrigger><PiQueueFill className={`p-2 dark:hover:text-slate-200`} size={48} /></DropdownMenuTrigger>
       <DropdownMenuContent>
         { queue && queue.length > 0 ? (
-          <div className={`flex flex-col w-96`}>
-            {queue.map((song) => {
-              return (
-                <button key={song.id} className={`p-2 px-4 flex flex-row items-center hover:bg-slate-700/90 ${song.id === nowPlayingId}`} onClick={() => onSongSelected(song)}>
-                  {/* Show art and track info */}
-                  <CoverArt className={`w-14 h-14`} src={convertFileSrc(`${coverArtPath}/${song?.albumId}.png`)} fallbackSrc={"https://via.placeholder.com/56"} alt="album cover" />
-                  <div className={`flex flex-col ml-2 mr-2 text-left`}>
-                    <span className={`text-md`}>{song.title}</span>
-                    <span className={`text-xs dark:text-slate-200/90`}>{song.artist}</span>
-                  </div>
-                  {/* Show play icon if song is currently playing */}
-                  {song.id === nowPlayingId && <CgLoadbarSound size={32} className={`ml-auto self-center`}/>}
-                </button>
-              )
-            })}
-          </div>
+          <ScrollArea className={`w-96 h-[36rem]`}>
+            <div className={`flex flex-col`}>
+              {queue.map((song) => {
+                return (
+                  <button key={song.id} className={`p-2 px-4 flex flex-row items-center hover:bg-slate-700/90 ${song.id === nowPlayingId}`} onClick={() => onSongSelected(song)}>
+                    {/* Show art and track info */}
+                    <CoverArt className={`w-14 h-14`} src={convertFileSrc(`${coverArtPath}/${song?.albumId}.png`)} fallbackSrc={"https://via.placeholder.com/56"} alt="album cover" />
+                    <div className={`flex flex-col ml-2 mr-2 text-left`}>
+                      <span className={`text-md`}>{song.title}</span>
+                      <span className={`text-xs dark:text-slate-200/90`}>{song.artist}</span>
+                    </div>
+                    {/* Show play icon if song is currently playing */}
+                    {song.id === nowPlayingId && <CgLoadbarSound size={32} className={`ml-auto self-center`}/>}
+                  </button>
+                )
+              })}
+            </div>
+          </ScrollArea>
         ) : (
           <div className={`p-2`}>Queue is empty.</div>
         )}
