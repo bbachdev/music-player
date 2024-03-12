@@ -44,6 +44,11 @@ export default function Library() {
     console.log('Selected Album: ', albumId)
     setSongList(await getAlbumDetail(config!.libraries, albumId))
   }
+
+  function navigateToCurrentlyPlayingAlbum(albumId: string) {
+    selectAlbum(albumId)
+    setSelectedAlbumArtist(nowPlaying?.artist)
+  }
   
   return (
     <div className={`flex flex-col w-full h-[stretch]`}>
@@ -74,7 +79,7 @@ export default function Library() {
             </ResizablePanel>
 
           </ResizablePanelGroup>
-          <NowPlaying libraries={config!.libraries} nowPlaying={nowPlaying} playQueue={playQueue} setNowPlaying={setNowPlaying} coverArtPath={coverArtPath}/>
+          <NowPlaying directToCurrentAlbum={navigateToCurrentlyPlayingAlbum} libraries={config!.libraries} nowPlaying={nowPlaying} playQueue={playQueue} setNowPlaying={setNowPlaying} coverArtPath={coverArtPath}/>
         </>
       )}      
     </div>

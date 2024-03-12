@@ -24,9 +24,10 @@ interface NowPlayingProps {
   setNowPlaying: Dispatch<SetStateAction<Song | undefined>>
   playQueue: Song[] | undefined
   coverArtPath: string
+  directToCurrentAlbum: (albumId: string) => void
 }
 
-export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQueue, coverArtPath }: NowPlayingProps) {
+export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQueue, coverArtPath, directToCurrentAlbum }: NowPlayingProps) {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState('0:00');
@@ -252,7 +253,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
           <div className={`relative`}>
             {songLoading && <Spinner className={`absolute left-[10px] top-[10px] z-50`} />}
             {songLoading && <div className={`absolute bg-slate-800/80 h-14 w-14`}></div>}
-            <CoverArt className={`w-14 h-14`} src={convertFileSrc(`${coverArtPath}/${nowPlaying?.albumId}.png`)} fallbackSrc={"https://via.placeholder.com/56"} alt="album cover" />
+            <button className={`hover:opacity-60`} onClick={(nowPlaying) ? () => directToCurrentAlbum(nowPlaying?.albumId) : undefined}><CoverArt className={`w-14 h-14`} src={convertFileSrc(`${coverArtPath}/${nowPlaying?.albumId}.png`)} fallbackSrc={"https://via.placeholder.com/56"} alt="album cover" /></button>
           </div>
           
           <div className={`flex flex-col flex-1`}>
