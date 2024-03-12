@@ -25,4 +25,5 @@ In its current iteration, the Rust-specific implementation is fairly simple; it 
 * Support for local file libraries
 * Download server tracks for offline functionality
 * UI polish + improvements
+* WebView2 UI adjustments
 * Metadata + Album Art updates (if supported by the API)
