@@ -14,6 +14,7 @@ interface SongSectionProps {
 export default function SongSection({ songs, setPlayQueue, setNowPlaying, nowPlaying, selectedAlbumArtist } : SongSectionProps) {
   const [header, setHeader] = useState('Songs')
   const [subHeader, setSubHeader] = useState('')
+  const [totalDuration, setTotalDuration] = useState<string | undefined>()
 
   useEffect(() => {
     if(songs.length > 0){
@@ -21,6 +22,8 @@ export default function SongSection({ songs, setPlayQueue, setNowPlaying, nowPla
       //TODO: Use album artist instead (pull in from album object)
       if(selectedAlbumArtist) {
         setSubHeader(selectedAlbumArtist)
+        let durationSeconds = songs.reduce((acc, song) => acc + song.duration, 0)
+        setTotalDuration(new Date(durationSeconds * 1000).toISOString().slice(11, 19).replace(/^00:/, ''))
       }
     }
   }, [songs])
@@ -56,6 +59,9 @@ export default function SongSection({ songs, setPlayQueue, setNowPlaying, nowPla
             })}
           </div>
         </ScrollArea>
+        <div className={`mt-auto p-4`}>
+          { songs.length > 0 && <> <span className={`text-sm text-slate-200`}>{songs.length} Tracks - {totalDuration}</span></> }
+        </div>
       </div>
     </div>
   )
