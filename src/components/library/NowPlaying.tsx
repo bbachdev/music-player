@@ -35,6 +35,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
   const [savedVolume, setSavedVolume] = useState(DEFAULT_VOLUME);
   const [songLoading, setSongLoading] = useState(false);
+  const [endReached, setEndReached] = useState(false);
 
   //Loaded songs
   const [loadedSongs, setLoadedSongs] = useState<Map<string, string>>(new Map())
@@ -56,11 +57,15 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
             loadedSongs.set(nowPlaying.id, audioData)
             audioRef.current.src = audioData
             audioRef.current.load()
-            audioRef.current.play()
-            setIsPlaying(true)
-            setSongLoading(false)
-            scrobble(nowPlaying.id, libraries)
-
+            if(endReached){
+              setEndReached(false)
+              setSongLoading(false)
+            }else{
+              audioRef.current.play()
+              setIsPlaying(true)
+              setSongLoading(false)
+              scrobble(nowPlaying.id, libraries)
+            }
             //TODO: Move to helper function + file 
             //Grab binary data for surrounding songs in queue
             let currentIndex = playQueue?.findIndex((song) => song.id === nowPlaying.id)
@@ -147,6 +152,12 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
             if(index !== playQueue.length-1){
               setNowPlaying(playQueue[index+1])
             }
+          }
+
+          //If no next song, reset to first song, but don't play
+          if(playQueue && playQueue[playQueue.length-1].id === nowPlaying?.id){
+            setEndReached(true)
+            setNowPlaying(playQueue[0])
           }
         }
       });
