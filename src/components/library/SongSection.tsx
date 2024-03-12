@@ -60,7 +60,7 @@ export default function SongSection({ songs, setPlayQueue, setNowPlaying, nowPla
           </div>
         </ScrollArea>
         <div className={`mt-auto p-4`}>
-          { songs.length > 0 && <> <span className={`text-sm text-slate-200`}>{songs.length} Tracks - {totalDuration}</span></> }
+          { songs.length > 0 && <> <span className={`text-sm text-slate-200`}>{songs.length} {(songs.length === 1) ? `Track` : `Tracks`} - {totalDuration}</span></> }
         </div>
       </div>
     </div>

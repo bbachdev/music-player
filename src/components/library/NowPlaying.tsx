@@ -251,6 +251,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
     setNowPlaying(song)
   }
 
+  //TODO: When clicking thumbnail, make sure to broadcast change to AlbumSection
   //TODO: Seek is a bit messed up (not consistent). Find out why.
   
   return (
