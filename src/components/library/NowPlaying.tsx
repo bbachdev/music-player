@@ -57,7 +57,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
             loadedSongs.set(nowPlaying.id, audioData)
             audioRef.current.src = audioData
             audioRef.current.load()
-            if(endReached){
+            if(endReached === true){
               setEndReached(false)
               setSongLoading(false)
             }else{
@@ -148,18 +148,18 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
           setIsPlaying(false);
 
           //Load next song if it exists
-          if(playQueue && playQueue[playQueue.length-1].id !== nowPlaying?.id){
-            let index = playQueue.findIndex((song) => song.id === nowPlaying?.id)
+          if(playQueue && playQueue[playQueue.length-1].id !== nowPlaying!.id){
+            let index = playQueue.findIndex((song) => song.id === nowPlaying!.id)
             if(index !== playQueue.length-1){
               setNowPlaying(playQueue[index+1])
             }
-          }
-
-          //If no next song, reset to first song, but don't play
-          if(playQueue && playQueue[playQueue.length-1].id === nowPlaying?.id){
-            setEndReached(true)
-            setNowPlaying(playQueue[0])
-          }
+          }else{
+            //If no next song, reset to first song, but don't play
+            if(playQueue && playQueue[playQueue.length-1].id === nowPlaying!.id){
+              setEndReached(true)
+              setNowPlaying(playQueue[0])
+            }
+          }   
         }
       });
       console.log("Loaded config done")
