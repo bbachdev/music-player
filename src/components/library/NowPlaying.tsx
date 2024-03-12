@@ -112,7 +112,8 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
     setHasLoaded(true);
     if (audioRef.current && progressRef.current) {
       audioRef.current.volume = volume / 100;
-      setDuration(`${Math.floor(audioRef.current.duration / 60)}:${Math.floor(audioRef.current.duration % 60)}`);
+      //setDuration(`${Math.floor(audioRef.current.duration / 60)}:${Math.floor(audioRef.current.duration % 60)}`);
+      setDuration(new Date(audioRef.current.duration * 1000).toISOString().slice(11, 19).replace(/^0+:/, ''))
       if(volumeRef.current) {
         volumeRef.current.style.background = `linear-gradient(to right, ${PROGRESS_COLOR} ${DEFAULT_VOLUME}%, #ccc ${DEFAULT_VOLUME}%)`;
       }
@@ -249,6 +250,8 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
   const queueSongSelected = (song: Song) => {
     setNowPlaying(song)
   }
+
+  //TODO: Seek is a bit messed up (not consistent). Find out why.
   
   return (
     <>
@@ -257,10 +260,12 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
         Your browser does not support the audio element.
       </audio>
       <div className={`flex flex-col dark:bg-slate-800 border-t-2 dark:border-white`}>
-        <div className={'ml-2 flex cursor-pointer'}>
-            <input className={'w-full'} ref={progressRef} type="range" step={`any`} defaultValue={0} onChange={(e) => seek(e)} onInput={() => updateProgress(progressRef)}/>
+        <div className={'flex flex-row ml-2 py-1'}>
+          <span className={`text-sm text-slate-200 px-2`}>{currentTime}</span>
+          <input className={'w-full cursor-pointer'} ref={progressRef} type="range" step={`any`} defaultValue={0} onChange={(e) => seek(e)} onInput={() => updateProgress(progressRef)}/>
+          <span className={`text-sm text-slate-200 mx-3`}>{duration}</span>
         </div>
-        <div className={`p-4 pt-2 flex flex-row items-center`}>
+        <div className={`p-4 pt-0 flex flex-row items-center`}>
           <div className={`relative`}>
             {songLoading && <Spinner className={`absolute left-[10px] top-[10px] z-50`} />}
             {songLoading && <div className={`absolute bg-slate-800/80 h-14 w-14`}></div>}
