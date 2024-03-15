@@ -51,7 +51,7 @@ export default function Library() {
   }
   
   return (
-    <div className={`flex flex-col w-full h-[stretch]`}>
+    <div className={`flex flex-col w-full h-[stretch] max-h-screen`}>
       { !config && (
         <div className={`flex flex-col h-[stretch]`}>
           <img className={`animate-pulse w-40 h-40 mx-auto my-auto`} src='/tauri.svg' alt='logo' />
