@@ -51,8 +51,13 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
         setSongLoading(true)
         if(audioRef.current){
           //TODO: Potentially pause/stop current audio if currently playing?
-
-          let audioData = await stream(nowPlaying, libraries)
+          //TODO: Can we garbage collect non-queued songs?
+          let audioData;
+          if(loadedSongs.has(nowPlaying.id)){
+            audioData = loadedSongs.get(nowPlaying.id)
+          }else{
+            audioData = await stream(nowPlaying, libraries)
+          }
           if(audioData) {
             loadedSongs.set(nowPlaying.id, audioData)
             audioRef.current.src = audioData
