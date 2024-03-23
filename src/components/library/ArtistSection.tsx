@@ -4,7 +4,6 @@ import { useQuery} from '@tanstack/react-query'
 import { getArtistList } from '@/util/subsonic'
 import { AlbumArtist } from '@/types/metadata'
 import { Dispatch, SetStateAction } from 'react'
-import { Virtuoso } from 'react-virtuoso'
 
 interface ArtistSectionProps {
   selectedArtist: string | undefined
@@ -31,7 +30,7 @@ export default function ArtistSection({ selectedArtist, setSelectedArtist, libra
 
   return (
     <div className={`h-full`}>
-      <div className={`flex flex-col h-full w-full`}>
+      <div className={`flex flex-col h-full w-full pb-2`}>
         <h2 className={`p-2`}>Artists</h2>
         <ScrollArea className={`w-full`}>
           <div className={`flex flex-col text-left`}>

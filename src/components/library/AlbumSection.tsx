@@ -44,7 +44,7 @@ export default function AlbumSection({ selectedArtist, libraries, onAlbumSelecte
 
   return (
     <div className={`h-full`}>
-      <div className={`flex flex-col h-full w-full`}>
+      <div className={`flex flex-col h-full w-full pb-2`}>
         <h2 className={`p-2`}>Albums</h2>
         <ScrollArea className={`px-4`}>
           <div className={`albumGrid w-full`}>

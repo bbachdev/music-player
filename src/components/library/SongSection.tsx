@@ -19,7 +19,6 @@ export default function SongSection({ songs, setPlayQueue, setNowPlaying, nowPla
   useEffect(() => {
     if(songs.length > 0){
       setHeader(songs[0].album)
-      //TODO: Use album artist instead (pull in from album object)
       if(selectedAlbumArtist) {
         setSubHeader(selectedAlbumArtist)
         let durationSeconds = songs.reduce((acc, song) => acc + song.duration, 0)
