@@ -23,11 +23,12 @@ interface NowPlayingProps {
   nowPlaying: Song | undefined
   setNowPlaying: Dispatch<SetStateAction<Song | undefined>>
   playQueue: Song[] | undefined
+  setPlayQueue: Dispatch<SetStateAction<Song[] | undefined>>
   coverArtPath: string
   directToCurrentAlbum: (albumId: string) => void
 }
 
-export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQueue, coverArtPath, directToCurrentAlbum }: NowPlayingProps) {
+export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQueue, coverArtPath, directToCurrentAlbum, setPlayQueue }: NowPlayingProps) {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState('0:00');
@@ -258,6 +259,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
 
   //TODO: When clicking thumbnail, make sure to broadcast change to AlbumSection
   //TODO: Seek is a bit messed up (not consistent). Find out why.
+  //TODO: Hide section when NowPlaying is empty
   
   return (
     <>
@@ -265,7 +267,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
         <source  />
         Your browser does not support the audio element.
       </audio>
-      <div className={`flex flex-col dark:bg-slate-800 border-t-2 dark:border-white`}>
+      <div className={`flex flex-col dark:bg-slate-800 border-t-2 dark:border-white ${(nowPlaying) ? '' : 'hidden'}`}>
         <div className={'flex flex-row ml-2 py-1'}>
           <span className={`text-sm text-slate-200 px-2`}>{currentTime}</span>
           <input className={'w-full cursor-pointer'} ref={progressRef} type="range" step={`any`} defaultValue={0} onChange={(e) => seek(e)} onInput={() => updateProgress(progressRef)}/>
@@ -299,7 +301,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
                 <input className={`cursor-pointer`} ref={volumeRef} type="range" defaultValue={volume} min={0} max={100} step={1} onChange={(e) => changeVolume(Number(e.target.value))} onInput={() => updateProgress(volumeRef)}/>
               </div>
             {/* <button className={`p-2 dark:hover:text-slate-200`} onClick={toggleQueueDisplay}><PiQueueFill size={36} /></button> */}
-            <QueueMenu onSongSelected={queueSongSelected} nowPlayingId={nowPlaying?.id} coverArtPath={coverArtPath} queue={playQueue} />
+            <QueueMenu onSongSelected={queueSongSelected} nowPlayingId={nowPlaying?.id} setPlayQueue={setPlayQueue} coverArtPath={coverArtPath} queue={playQueue} />
           </div>
         </div>
       </div>
