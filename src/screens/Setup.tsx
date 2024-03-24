@@ -1,5 +1,5 @@
 import { useTheme } from '@/components/providers/ThemeProvider';
-import { getStore } from '@/util/config';
+import { store } from '@/util/config';
 import AdditionalSettingsStep from '@/components/setup/AdditionalSettingsStep';
 import LibraryStep from '@/components/setup/LibraryStep';
 import ThemeStep from '@/components/setup/ThemeStep';
@@ -27,7 +27,6 @@ export default function Setup() {
     console.log(`Setup complete!`, config)
 
     //Write the config to Store
-    let store = getStore();
     Object.entries(config)
     .forEach(async ([key, value]) => await store.set(key, value))
 

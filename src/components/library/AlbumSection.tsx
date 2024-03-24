@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import CoverArt from '@/components/library/CoverArt'
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { Album } from '@/types/metadata'
-import { getStore } from '@/util/config'
+import { store } from '@/util/config'
 
 interface AlbumSectionProps {
   selectedArtist?: string
@@ -13,7 +13,7 @@ interface AlbumSectionProps {
   setSelectedAlbumArtist: Dispatch<SetStateAction<string | undefined>>
 }
 
-const coverArtPath = await getStore().get('coverArtPath') as string
+const coverArtPath = await store.get('coverArtPath') as string
 
 export default function AlbumSection({ selectedArtist, onAlbumSelected, setSelectedAlbumArtist } : AlbumSectionProps) {
   const [filteredAlbumList, setFilteredAlbumList] = useState<Album[]>([])

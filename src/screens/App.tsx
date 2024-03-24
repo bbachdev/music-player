@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { getStore } from "@/util/config";
+import { store } from "@/util/config";
 import { useNavigate } from '@tanstack/react-router';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      navigate({ to: (await getStore().length() > 0 ? '/library' : '/setup')});
+      navigate({ to: (await store.length() > 0 ? '/library' : '/setup')});
     })();
   }, []);
 

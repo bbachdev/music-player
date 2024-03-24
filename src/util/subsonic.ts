@@ -2,10 +2,10 @@ import { Library } from '@/types/config';
 import { AlbumArtist, Album, Song } from '@/types/metadata';
 import { BaseDirectory, mkdir, exists } from '@tauri-apps/plugin-fs';
 import { getAlbumCovers } from '@/util/musicinfo';
-import { getStore } from '@/util/config';
+import { store } from '@/util/config';
 
 export async function getArtistList() : Promise<AlbumArtist[]> {
-  const libraries = await getStore().get('libraries') as Library[];
+  const libraries = await store.get('libraries') as Library[];
   const artistList: AlbumArtist[] = []
   await Promise.all(libraries.map(async (library) => {
     if (library.type === 'local') return;
@@ -26,7 +26,7 @@ export async function getArtistList() : Promise<AlbumArtist[]> {
 }
 
 export async function getAlbumList() : Promise<Album[]> {
-  const libraries = await getStore().get('libraries') as Library[];
+  const libraries = await store.get('libraries') as Library[];
   const albumList: Album[] = []
   await Promise.all(libraries.map(async (library) => {
     if (library.type === 'local') return;
@@ -56,7 +56,7 @@ export async function getAlbumList() : Promise<Album[]> {
 }
 
 export async function getAlbumsForArtist(artistId: string) : Promise<Album[]> {
-  const libraries = await getStore().get('libraries') as Library[];
+  const libraries = await store.get('libraries') as Library[];
   let albumList: Album[] = []
   await Promise.all(libraries.map(async (library) => {
     if (library.type === 'local') return;
@@ -99,7 +99,7 @@ export async function getAlbumsForArtist(artistId: string) : Promise<Album[]> {
 }
 
 export async function getAlbumDetail(albumId: string) : Promise<Song[]> {
-  const libraries = await getStore().get('libraries') as Library[];
+  const libraries = await store.get('libraries') as Library[];
   const songList: Song[] = []
   await Promise.all(libraries.map(async (library) => {
     if (library.type === 'local') return;
@@ -120,7 +120,7 @@ export async function getAlbumDetail(albumId: string) : Promise<Song[]> {
 }
 
 export async function stream(song: Song) : Promise<string | undefined> {
-  const libraries = await getStore().get('libraries') as Library[];
+  const libraries = await store.get('libraries') as Library[];
   //TODO: Rewrite to get around multiple libraries
 
   let host = '';
@@ -140,7 +140,7 @@ export async function stream(song: Song) : Promise<string | undefined> {
 }
 
 export async function scrobble(songId: string) : Promise<boolean> {
-  const libraries = await getStore().get('libraries') as Library[];
+  const libraries = await store.get('libraries') as Library[];
   let library = libraries[0];
 
   if (library.type === 'local') return false;

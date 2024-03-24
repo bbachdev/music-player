@@ -12,7 +12,7 @@ import CoverArt from './CoverArt';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import Spinner from '../ui/spinner';
 import QueueMenu from './QueueMenu';
-import { getStore } from '@/util/config';
+import { store } from '@/util/config';
 
 const DEFAULT_VOLUME = 65;
 //Progress color for input range sliders
@@ -26,7 +26,7 @@ interface NowPlayingProps {
   directToCurrentAlbum: (albumId: string) => void
 }
 
-const coverArtPath = await getStore().get('coverArtPath') as string
+const coverArtPath = await store.get('coverArtPath') as string
 
 export default function NowPlaying({ nowPlaying, setNowPlaying, playQueue, directToCurrentAlbum, setPlayQueue }: NowPlayingProps) {
   const [hasLoaded, setHasLoaded] = useState(false);
