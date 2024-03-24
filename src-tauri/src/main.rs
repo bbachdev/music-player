@@ -19,7 +19,7 @@ fn main() {
   let table_migration = Migration {
     version: 1,
     description: "create_initial_tables",
-    sql: "CREATE TABLE libraries(id text PRIMARY KEY,name text,type text,path text,host text,port integer,username text,md5 text,salt text);CREATE TABLE artists(id text PRIMARY KEY,name text,coverArt text);CREATE TABLE albums(id text PRIMARY KEY,parent text,album text,title text,name text,isDir integer,coverArt text,songCount integer,created Date,duration integer,playCount integer,artistId text,artist text,year integer,genre text,);CREATE TABLE songs(id text PRIMARY KEY,parent text,title text,isDir integer,isVideo integer,type text,albumId text,album text,artist text,coverArt text,duration integer,bitRate integer,track integer,year integer,genre text,size integer,discNumber integer,suffix text,contentType text,path text);",
+    sql: "CREATE TABLE libraries(id text PRIMARY KEY,name text,type text,path text,host text,port integer,username text,md5 text,salt text); CREATE TABLE artists(id text PRIMARY KEY,name text,coverArt text); CREATE TABLE albums(id text PRIMARY KEY,parent text,album text,title text,name text,isDir integer,coverArt text,songCount integer,created Date,duration integer,playCount integer,artistId text,artist text,year integer,genre text); CREATE TABLE songs(id text PRIMARY KEY,parent text,title text,isDir integer,isVideo integer,type text,albumId text,album text,artist text,coverArt text,duration integer,bitRate integer,track integer,year integer,genre text,size integer,discNumber integer,suffix text,contentType text,path text);",
     kind: MigrationKind::Up,
   };
 
