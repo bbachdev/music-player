@@ -1,5 +1,4 @@
 import { ScrollArea } from '../ui/scroll-area'
-import { Library } from '@/types/config'
 import { useQuery} from '@tanstack/react-query'
 import { getArtistList } from '@/util/subsonic'
 import { AlbumArtist } from '@/types/metadata'
@@ -8,11 +7,10 @@ import { Dispatch, SetStateAction } from 'react'
 interface ArtistSectionProps {
   selectedArtist: string | undefined
   setSelectedArtist: Dispatch<SetStateAction<string | undefined>>
-  libraries: Library[]
 }
 
-export default function ArtistSection({ selectedArtist, setSelectedArtist, libraries } : ArtistSectionProps) {
-  const { isPending, error, data: artistList } = useQuery({queryKey: ['artistList'], queryFn: () => getArtistList(libraries), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
+export default function ArtistSection({ selectedArtist, setSelectedArtist } : ArtistSectionProps) {
+  const { isPending, error, data: artistList } = useQuery({queryKey: ['artistList'], queryFn: () => getArtistList(), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
 
   if (isPending) return <div>Loading...</div>
 

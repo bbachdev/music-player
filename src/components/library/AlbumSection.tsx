@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { ScrollArea } from '../ui/scroll-area'
 import { getAlbumList, getAlbumsForArtist } from '@/util/subsonic'
-import { Library } from '@/types/config'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import CoverArt from '@/components/library/CoverArt'
 import { convertFileSrc } from '@tauri-apps/api/core';
@@ -9,22 +8,21 @@ import { Album } from '@/types/metadata'
 
 interface AlbumSectionProps {
   selectedArtist?: string
-  libraries: Library[]
   onAlbumSelected: (albumId: string) => void
   coverArtPath: string
   setSelectedAlbumArtist: Dispatch<SetStateAction<string | undefined>>
 }
 
-export default function AlbumSection({ selectedArtist, libraries, onAlbumSelected, coverArtPath, setSelectedAlbumArtist } : AlbumSectionProps) {
+export default function AlbumSection({ selectedArtist, onAlbumSelected, coverArtPath, setSelectedAlbumArtist } : AlbumSectionProps) {
   const [filteredAlbumList, setFilteredAlbumList] = useState<Album[]>([])
   const [selectedAlbum, setSelectedAlbum] = useState<string | undefined>(undefined)
-  const { isPending, error, data: albums } = useQuery({queryKey: ['albumList'], queryFn: () => getAlbumList(libraries), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
+  const { isPending, error, data: albums } = useQuery({queryKey: ['albumList'], queryFn: () => getAlbumList(), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
 
   useEffect(() => {
     async function getAlbums() {
       console.log("Selected Artist: ", selectedArtist)
       if(selectedArtist){
-        setFilteredAlbumList(await getAlbumsForArtist(libraries, selectedArtist))
+        setFilteredAlbumList(await getAlbumsForArtist(selectedArtist))
       }else{
         setFilteredAlbumList([])
       }

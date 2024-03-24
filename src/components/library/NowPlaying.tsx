@@ -1,4 +1,3 @@
-import { Library } from '@/types/config';
 import { Song } from '@/types/metadata';
 import { scrobble, stream } from '@/util/subsonic';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
@@ -19,7 +18,6 @@ const DEFAULT_VOLUME = 65;
 const PROGRESS_COLOR = 'white'
 
 interface NowPlayingProps {
-  libraries: Library[]
   nowPlaying: Song | undefined
   setNowPlaying: Dispatch<SetStateAction<Song | undefined>>
   playQueue: Song[] | undefined
@@ -28,7 +26,7 @@ interface NowPlayingProps {
   directToCurrentAlbum: (albumId: string) => void
 }
 
-export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQueue, coverArtPath, directToCurrentAlbum, setPlayQueue }: NowPlayingProps) {
+export default function NowPlaying({ nowPlaying, setNowPlaying, playQueue, coverArtPath, directToCurrentAlbum, setPlayQueue }: NowPlayingProps) {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState('0:00');
@@ -57,7 +55,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
           if(loadedSongs.has(nowPlaying.id)){
             audioData = loadedSongs.get(nowPlaying.id)
           }else{
-            audioData = await stream(nowPlaying, libraries)
+            audioData = await stream(nowPlaying)
           }
           if(audioData) {
             loadedSongs.set(nowPlaying.id, audioData)
@@ -70,7 +68,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
               audioRef.current.play()
               setIsPlaying(true)
               setSongLoading(false)
-              scrobble(nowPlaying.id, libraries)
+              scrobble(nowPlaying.id)
             }
             //TODO: Move to helper function + file 
             //Grab binary data for surrounding songs in queue
@@ -80,7 +78,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
               if(currentIndex && currentIndex !== 0){
                 let prevSong = playQueue[currentIndex-1]
                 if(!loadedSongs.has(prevSong.id)){
-                  let prevSongData = await stream(prevSong, libraries)
+                  let prevSongData = await stream(prevSong)
                   if(prevSongData){
                     loadedSongs.set(prevSong.id, prevSongData)
                   }
@@ -90,7 +88,7 @@ export default function NowPlaying({ libraries, nowPlaying, setNowPlaying, playQ
               if(currentIndex && currentIndex !== playQueue?.length-1){
                 let nextSong = playQueue[currentIndex+1]
                 if(!loadedSongs.has(nextSong.id)){
-                  let nextSongData = await stream(nextSong, libraries)
+                  let nextSongData = await stream(nextSong)
                   if(nextSongData){
                     loadedSongs.set(nextSong.id, nextSongData)
                   }
