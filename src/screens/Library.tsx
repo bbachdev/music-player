@@ -23,8 +23,8 @@ export default function Library() {
 
   useEffect(() => {
     async function getConfig() {
-      const config = await readTextFile('config.json', {baseDir: BaseDirectory.AppLocalData});
-      setConfig(JSON.parse(config))
+      // const config = await readTextFile('config.json', {baseDir: BaseDirectory.AppLocalData});
+      // setConfig(JSON.parse(config))
     }
 
     getConfig()
