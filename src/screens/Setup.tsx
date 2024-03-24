@@ -7,6 +7,7 @@ import WelcomeStep from '@/components/setup/WelcomeStep';
 import { Config } from '@/types/config';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { appLocalDataDir } from '@tauri-apps/api/path';
 
 export default function Setup() {
   const { theme } = useTheme()
@@ -29,6 +30,10 @@ export default function Setup() {
     let store = getStore();
     Object.entries(config)
     .forEach(async ([key, value]) => await store.set(key, value))
+
+    //Get cover art path
+    let path = await appLocalDataDir() + '/cover_art'
+    await store.set('coverArtPath', path)
    
     //Save store
     await store.save()

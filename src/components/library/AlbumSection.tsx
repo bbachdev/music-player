@@ -5,15 +5,17 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import CoverArt from '@/components/library/CoverArt'
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { Album } from '@/types/metadata'
+import { getStore } from '@/util/config'
 
 interface AlbumSectionProps {
   selectedArtist?: string
   onAlbumSelected: (albumId: string) => void
-  coverArtPath: string
   setSelectedAlbumArtist: Dispatch<SetStateAction<string | undefined>>
 }
 
-export default function AlbumSection({ selectedArtist, onAlbumSelected, coverArtPath, setSelectedAlbumArtist } : AlbumSectionProps) {
+const coverArtPath = await getStore().get('coverArtPath') as string
+
+export default function AlbumSection({ selectedArtist, onAlbumSelected, setSelectedAlbumArtist } : AlbumSectionProps) {
   const [filteredAlbumList, setFilteredAlbumList] = useState<Album[]>([])
   const [selectedAlbum, setSelectedAlbum] = useState<string | undefined>(undefined)
   const { isPending, error, data: albums } = useQuery({queryKey: ['albumList'], queryFn: () => getAlbumList(), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
@@ -29,6 +31,12 @@ export default function AlbumSection({ selectedArtist, onAlbumSelected, coverArt
     }
     getAlbums()
   }, [selectedArtist])
+
+  useEffect(() => {
+    if(selectedAlbum){
+      onAlbumSelected(selectedAlbum)
+    }
+  }, [selectedAlbum])
 
   if (isPending) return <div>Loading...</div>
 
