@@ -18,6 +18,7 @@
     "store:allow-length",
     "store:allow-get",
     "store:allow-set",
+    "store:allow-save",
     "fs:default",
     {
       "identifier": "fs:allow-exists",

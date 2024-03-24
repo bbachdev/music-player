@@ -8,7 +8,7 @@ import { Config } from '@/types/config';
 import { Song } from '@/types/metadata';
 import { getAlbumDetail } from '@/util/subsonic';
 import { appLocalDataDir } from '@tauri-apps/api/path';
-import { readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { getStore } from '@/util/config';
 import { useEffect, useState } from 'react';
 
 export default function Library() {
@@ -23,8 +23,14 @@ export default function Library() {
 
   useEffect(() => {
     async function getConfig() {
-      // const config = await readTextFile('config.json', {baseDir: BaseDirectory.AppLocalData});
-      // setConfig(JSON.parse(config))
+      //TODO: See if it's faster to get on-demand or all at once
+      const store = getStore();
+      const config: Partial<Config> = {}
+      config.theme = await store.get('theme') || undefined
+      config.accentColor = await store.get('accentColor') || undefined
+      config.libraries = await store.get('libraries') || undefined
+      config.discordRichPresence = await store.get('discordRichPresence') || undefined
+      setConfig(config as Config)
     }
 
     getConfig()

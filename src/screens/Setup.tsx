@@ -1,11 +1,11 @@
 import { useTheme } from '@/components/providers/ThemeProvider';
+import { getStore } from '@/util/config';
 import AdditionalSettingsStep from '@/components/setup/AdditionalSettingsStep';
 import LibraryStep from '@/components/setup/LibraryStep';
 import ThemeStep from '@/components/setup/ThemeStep';
 import WelcomeStep from '@/components/setup/WelcomeStep';
 import { Config } from '@/types/config';
 import { useState } from 'react';
-import { exists, mkdir, writeTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { useNavigate } from '@tanstack/react-router';
 
 export default function Setup() {
@@ -24,12 +24,14 @@ export default function Setup() {
 
   async function completeSetup() {
     console.log(`Setup complete!`, config)
-    //Write the config to a file
-    const appFolderExists = await exists('', {baseDir: BaseDirectory.AppLocalData});
-    if(!appFolderExists) {
-      await mkdir('', {baseDir: BaseDirectory.AppLocalData});
-    }
-    await writeTextFile('config.json', JSON.stringify(config), {baseDir: BaseDirectory.AppLocalData});
+
+    //Write the config to Store
+    let store = getStore();
+    Object.entries(config)
+    .forEach(async ([key, value]) => await store.set(key, value))
+   
+    //Save store
+    await store.save()
     navigate({ to: '/library'});
   }
 
