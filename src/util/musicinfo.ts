@@ -3,7 +3,7 @@ import { exists, mkdir, BaseDirectory, writeFile } from '@tauri-apps/plugin-fs';
 import { Album } from '@/types/metadata'
 import { Library } from '@/types/config';
 
-const CONCURRENCY_LIMIT = 20
+const ALBUM_ART_CONCURRENCY_LIMIT = 20
 
 export async function getAlbumCovers(libraries: Library[], albums: Album[], full: boolean) : Promise<boolean> {
   try{
@@ -12,8 +12,8 @@ export async function getAlbumCovers(libraries: Library[], albums: Album[], full
       //TODO: Look to display a loading indicator for album section
       let albumChunks: Album[] = []
 
-      for (let i = 0; i < albums.length; i += CONCURRENCY_LIMIT) {
-        let chunk = albums.slice(i, i + CONCURRENCY_LIMIT)
+      for (let i = 0; i < albums.length; i += ALBUM_ART_CONCURRENCY_LIMIT) {
+        let chunk = albums.slice(i, i + ALBUM_ART_CONCURRENCY_LIMIT)
         albumChunks.push(...chunk)
       }
 
@@ -55,4 +55,32 @@ async function getAlbumCover(library: Library, album: Album) : Promise<Map<strin
   const data = await res.arrayBuffer()
   
   return new Map<string, ArrayBuffer>().set(album.id, data)
+}
+
+export async function syncLibraries(libraries: Library[]) {
+  try{
+    for (const library of libraries) {
+      if(library.type === 'remote'){
+        //Get artist list
+        //Get album list for artist
+        //Get song list for album
+      }
+    }
+  }catch(e){
+    console.log('Error syncing libraries: ', e)
+  }
+}
+
+export async function syncAlbumArt() {
+  try{
+    //Create the cover art directory if it doesn't exist
+    let artDirectoryExists = await exists('cover_art', {baseDir: BaseDirectory.AppLocalData})
+    if(!artDirectoryExists) {
+      await mkdir('cover_art', {baseDir: BaseDirectory.AppLocalData})
+    }
+    //TODO: Get all albums from the database
+
+  }catch(e){
+    console.log('Error syncing album art: ', e)
+  }
 }

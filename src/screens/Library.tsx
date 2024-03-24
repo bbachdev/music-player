@@ -12,6 +12,7 @@ import { readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { useEffect, useState } from 'react';
 
 export default function Library() {
+  const [syncStatus, setSyncStatus] = useState<number>(0)
   const [coverArtPath, setCoverArtPath] = useState<string>('')
   const [config, setConfig] = useState<Config>();
   const [songList, setSongList] = useState<Song[]>([]);
@@ -59,7 +60,7 @@ export default function Library() {
       )}
       { config && (
         <>
-          <Header/>
+          <Header syncStatus={syncStatus}/>
           <ResizablePanelGroup direction="horizontal">
 
             <ResizablePanel minSize={20}>
