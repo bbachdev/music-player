@@ -1,14 +1,14 @@
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { PiQueueFill } from 'react-icons/pi';
-import { CgLoadbarSound } from "react-icons/cg";
 import { DropdownMenuContent } from '../ui/dropdown-menu';
 import { Song } from '@/types/metadata';
-import CoverArt from './CoverArt';
-import { convertFileSrc } from '@tauri-apps/api/core';
 import { ScrollArea } from '../ui/scroll-area';
-import { FaTrash } from "react-icons/fa";
-import { MdDragIndicator } from "react-icons/md";
 import { Dispatch, SetStateAction } from 'react';
+import {restrictToVerticalAxis, restrictToWindowEdges} from '@dnd-kit/modifiers';
+
+import {DndContext, DragEndEvent} from '@dnd-kit/core';
+import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
+import QueueItem from './QueueItem';
 
 interface QueueMenuProps {
   nowPlayingId: string | undefined
@@ -21,8 +21,24 @@ interface QueueMenuProps {
 export default function QueueMenu({ nowPlayingId, coverArtPath, queue, onSongSelected, setPlayQueue } : QueueMenuProps) {
 
   //TODO: Implement drag and drop reordering of queue
+  function reorderQueue(e: DragEndEvent) {
+    if(!e.over) return
+
+    if(e.active.id !== e.over.id) {
+      setPlayQueue((prevQueue) => {
+        if(!prevQueue) return
+        const newQueue = [...prevQueue]
+        const fromIndex = prevQueue.findIndex(song => song.id === e.active.id)
+        const toIndex = prevQueue.findIndex(song => song.id === e.over!.id)
+        const [movedSong] = newQueue.splice(fromIndex, 1)
+        newQueue.splice(toIndex, 0, movedSong)
+        return newQueue
+      })
+    }
+  }
 
   function removeFromQueue(songId: string) {
+    console.log("Delete")
     setPlayQueue(queue?.filter(song => song.id !== songId))
   }
 
@@ -32,36 +48,17 @@ export default function QueueMenu({ nowPlayingId, coverArtPath, queue, onSongSel
       <DropdownMenuContent>
         { queue && queue.length > 0 ? (
           <ScrollArea className={`w-96 h-[36rem]`}>
-            <div className={`flex flex-col`}>
-              {queue.map((song) => {
-                return (
-                  <div className={`flex flex-row items-center mr-2`}>
-                    <button className={`px-2 cursor-pointer flex items-center hover:text-slate-200`}>
-                      <MdDragIndicator size={24} className={`mr-auto self-center`} />
-                    </button>
-                    <button key={song.id} className={`flex-1 p-2 px-2 flex flex-row items-center hover:bg-slate-700/90 ${song.id === nowPlayingId}`} onClick={() => onSongSelected(song)}>
-                      {/* Show art and track info */}
-                      <CoverArt className={`w-14 h-14`} src={convertFileSrc(`${coverArtPath}/${song?.albumId}.png`)} fallbackSrc={"https://via.placeholder.com/56"} alt="album cover" />
-                      <div className={`flex flex-col ml-2 mr-2 text-left`}>
-                        <span className={`text-sm`}>{song.title}</span>
-                        <span className={`text-xs dark:text-slate-200/90`}>{song.artist}</span>
-                      </div>
-                      {/* Show play icon if song is currently playing, else let user remove from queue */}
-                    </button>
-                    <div className={`ml-auto`}>
-                      {song.id === nowPlayingId ? (
-                        <CgLoadbarSound size={32} />
-                      ) :
-                        <button className={`flex items-center hover:text-slate-200`}>
-                          <FaTrash size={16} onClick={() => removeFromQueue(song.id)} className={`mx-2`} />
-                        </button>
-                        
-                      }
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <DndContext onDragEnd={reorderQueue} modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}>
+              <SortableContext items={queue} strategy={verticalListSortingStrategy}>
+                <div className={`flex flex-col`}>
+                  {queue.map((song) => {
+                    return (
+                      <QueueItem key={song.id} song={song} nowPlayingId={nowPlayingId} coverArtPath={coverArtPath} onSongSelected={onSongSelected} removeFromQueue={removeFromQueue} />
+                    )
+                  })}
+                </div>
+              </SortableContext>
+            </DndContext>
           </ScrollArea>
         ) : (
           <div className={`p-2`}>Queue is empty.</div>
