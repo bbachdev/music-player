@@ -15,6 +15,9 @@
     "sql:allow-load",
     "sql:allow-execute",
     "sql:allow-select",
+    "store:allow-length",
+    "store:allow-get",
+    "store:allow-set",
     "fs:default",
     {
       "identifier": "fs:allow-exists",
