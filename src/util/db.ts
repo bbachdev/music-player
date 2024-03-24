@@ -7,19 +7,19 @@ async function connect() {
 }
 
 // Libaries
-async function saveLibraryDetails(libaries: Library[]) {
+export async function saveLibraryDetails(libaries: Library[]) {
   try{
     const db = await connect();
 
     for (const library of libaries) {
       if(library.type === 'local'){
         await db.execute(
-          "INSERT INTO libraries (id, name, type, path) VALUES (?, ?)",
+          "INSERT into libraries (id, name, type, path) VALUES ($1, $2, $3, $4)",
           [library.id, library.name, library.path, library.path]
         );
       }else{
         await db.execute(
-          "INSERT INTO libraries (id, name, type, host, port, username, md5, salt) VALUES (?, ?)",
+          "INSERT into libraries (id, name, type, host, port, username, md5, salt) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
           [library.id, library.name, library.type, library.connectionDetails.host, library.connectionDetails.port, library.connectionDetails.username, library.connectionDetails.md5, library.connectionDetails.salt]
         );
       } 
@@ -29,7 +29,7 @@ async function saveLibraryDetails(libaries: Library[]) {
   }
 }
 
-async function getLibraries() : Promise<Library[]> {
+export async function getLibraries() : Promise<Library[]> {
   let libraryList: Library[] = []
   try{
     const db = await connect();

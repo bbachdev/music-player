@@ -12,6 +12,9 @@
     "menu:default",
     "tray:default",
     "shell:allow-open",
+    "sql:allow-load",
+    "sql:allow-execute",
+    "sql:allow-select",
     "fs:default",
     {
       "identifier": "fs:allow-exists",
