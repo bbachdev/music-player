@@ -2,6 +2,7 @@
 import { exists, mkdir, BaseDirectory, writeFile } from '@tauri-apps/plugin-fs';
 import { Album } from '@/types/metadata'
 import { Library } from '@/types/config';
+import { getIndexes } from './subsonic';
 
 const ALBUM_ART_CONCURRENCY_LIMIT = 20
 
@@ -61,8 +62,15 @@ export async function syncLibraries(libraries: Library[]) {
   try{
     for (const library of libraries) {
       if(library.type === 'remote'){
+        //Get indexed list (based on last sync date)
+        let modifiedArtists = await getIndexes(library)
+        console.log('Modified Artists: ', modifiedArtists)
+
         //Get artist list
+        //TODO: If "albumCount" is 0, should we delete from db?
+
         //Get album list for artist
+
         //Get song list for album
       }
     }

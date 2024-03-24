@@ -146,3 +146,26 @@ export async function scrobble(songId: string, libraries: Library[]) : Promise<b
 
   return data['subsonic-response'].status === 'ok';
 }
+
+export async function getIndexes(library: Library) : Promise<AlbumArtist[]> {
+  if(library.type === 'local') return [];
+  let modifiedArtists: AlbumArtist[] = []
+
+  //TODO: Get "lastSynced" from store; for now, just use default
+  let lastSynced = 0;
+
+  let host = library.connectionDetails.host + (library.connectionDetails.port ? `:${library.connectionDetails.port}` : '');
+  let connectionString = `${host}/rest/getIndexes.view?u=${library.connectionDetails.username}&t=${library.connectionDetails.md5}&s=${library.connectionDetails.salt}&v=1.16.1&c=tauri&f=json&ifModifiedSince=${lastSynced}`;
+
+  const res = await fetch(connectionString);
+  const data = await res.json()
+
+  //Return list of modified artists (if any)
+  data['subsonic-response'].indexes.index.forEach((letterIndex: any) => {
+    letterIndex.artist.forEach((artist: any) => {
+      modifiedArtists.push(artist as AlbumArtist);
+    })
+  })
+
+  return modifiedArtists;
+}
