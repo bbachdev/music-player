@@ -23,7 +23,7 @@ export default function Library() {
 
   useEffect(() => {
     async function getConfig() {
-      //TODO: See if it's faster to get on-demand or all at once
+      //TODO: Revise prop passing to eliminate config-related items
       const store = getStore();
       const config: Partial<Config> = {}
       config.theme = await store.get('theme') || undefined
