@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { exists, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { store } from "@/util/config";
 import { useNavigate } from '@tanstack/react-router';
 
 function App() {
@@ -7,8 +7,7 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const existsResult = await exists('config.json', {baseDir: BaseDirectory.AppLocalData});
-      navigate({ to: (existsResult ? '/library' : '/setup')});
+      navigate({ to: (await store.length() > 0 ? '/library' : '/setup')});
     })();
   }, []);
 

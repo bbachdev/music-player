@@ -12,10 +12,11 @@ tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
 tauri = { version = "2.0.0-beta", features = ["protocol-asset"] }
-tauri-plugin-shell = "2.0.0-beta"
+tauri-plugin-shell = "2.0.0-beta.3"
+tauri-plugin-store = "2.0.0-beta.4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tauri-plugin-fs = "2.0.0-beta.1"
+tauri-plugin-fs = "2.0.0-beta.3"
 reqwest = "0.11.24"
 tokio = {version = "1.36.0", features = ["full"] }
 anyhow = "1.0.80"
@@ -23,6 +24,11 @@ md5 = "0.7.0"
 rand = "0.8.5"
 rand_core = "0.6.4"
 
+[dependencies.tauri-plugin-sql]
+features = ["sqlite"] # or "postgres", or "mysql"
+version = "2.0.0-beta"
+
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
+

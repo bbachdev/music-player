@@ -4,45 +4,68 @@ import Header from '@/components/library/Header';
 import NowPlaying from '@/components/library/NowPlaying';
 import SongSection from '@/components/library/SongSection';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { Config } from '@/types/config';
-import { Song } from '@/types/metadata';
-import { getAlbumDetail } from '@/util/subsonic';
-import { appLocalDataDir } from '@tauri-apps/api/path';
-import { readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { Album, Song } from '@/types/metadata';
+import { store } from '@/util/config';
+import { getAlbumDetail, getAlbumList, getIndexes } from '@/util/subsonic';
 import { useEffect, useState } from 'react';
+import { Library as UserLibrary } from '@/types/config';
+import { getArtistList, saveAlbums, saveModifiedArtists, saveSongs } from '@/util/db';
+import { getAlbumsForMultipleArtists, getSongsForMultipleAlbums } from '@/util/musicinfo';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Library() {
-  const [coverArtPath, setCoverArtPath] = useState<string>('')
-  const [config, setConfig] = useState<Config>();
+  const [syncStatus, setSyncStatus] = useState<number>(0)
   const [songList, setSongList] = useState<Song[]>([]);
   const [playQueue, setPlayQueue] = useState<Song[] | undefined>(undefined);
   const [selectedArtist, setSelectedArtist] = useState<string | undefined>(undefined);
   const [selectedAlbumArtist, setSelectedAlbumArtist] = useState<string | undefined>(undefined);
   const [nowPlaying, setNowPlaying] = useState<Song | undefined>(undefined);
 
-  useEffect(() => {
-    async function getConfig() {
-      const config = await readTextFile('config.json', {baseDir: BaseDirectory.AppLocalData});
-      setConfig(JSON.parse(config))
-    }
-
-    getConfig()
-  }, [])
+  //Music data
+  const { data: artistList, refetch: refetchArtists } = useQuery({queryKey: ['artistList'], queryFn: () => getArtistList(), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
+  //Still get the "Recently Played" albums from server (it's helpful, real-time, and not too much data to fetch). Might change later.
+  const { data: albums, refetch: refetchAlbums } = useQuery({queryKey: ['albumList'], queryFn: () => getAlbumList(), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
 
   useEffect(() => {
-    async function getCoverArtPath() {
-      if(!coverArtPath){
-        let path = await appLocalDataDir() + '/cover_art'
-        console.log('Cover Art Path: ', path)
-        setCoverArtPath(path)
+    async function sync() {
+      let libraries = await store.get('libraries') as UserLibrary[]
+      for (const library of libraries) {
+        if(library.type === 'remote'){
+          let modifiedArtists = await getIndexes(library)
+          console.log('Modified Artists: ', modifiedArtists)
+          if(modifiedArtists.length > 0){
+            setSyncStatus(1)
+            //Save the modified artists to the database (any new artists)
+            await saveModifiedArtists(modifiedArtists)
+            //TODO: If "albumCount" is 0, should we delete from db?
+
+            //Grab albums for each artist
+            let albumList: Album[] = await getAlbumsForMultipleArtists(modifiedArtists)
+            await saveAlbums(albumList)
+
+            //Grab songs for each album
+            let songList: Song[] = await getSongsForMultipleAlbums(albumList)
+            await saveSongs(songList)
+
+            //Set "modified" timestamp
+            await store.set('lastSync', new Date().getTime())
+
+            //Retrieve the updated lists
+            refetchArtists()
+            refetchAlbums()
+
+            //Finish sync
+            setSyncStatus(0)
+          }
+        }
       }
     }
-    getCoverArtPath()
+    sync()
   }, [])
 
   async function selectAlbum(albumId: string) {
     console.log('Selected Album: ', albumId)
-    setSongList(await getAlbumDetail(config!.libraries, albumId))
+    setSongList(await getAlbumDetail(albumId))
   }
 
   function navigateToCurrentlyPlayingAlbum(albumId: string) {
@@ -52,36 +75,27 @@ export default function Library() {
   
   return (
     <div className={`flex flex-col w-full h-[stretch] max-h-screen`}>
-      { !config && (
-        <div className={`flex flex-col h-[stretch]`}>
-          <img className={`animate-pulse w-40 h-40 mx-auto my-auto`} src='/tauri.svg' alt='logo' />
-        </div>
-      )}
-      { config && (
-        <>
-          <Header/>
-          <ResizablePanelGroup direction="horizontal">
+      <Header syncStatus={syncStatus}/>
+      <ResizablePanelGroup direction="horizontal">
 
-            <ResizablePanel minSize={20}>
-              <ArtistSection selectedArtist={selectedArtist} setSelectedArtist={setSelectedArtist} libraries={config!.libraries} />
-            </ResizablePanel>
+        <ResizablePanel minSize={20}>
+          <ArtistSection artistList={artistList} selectedArtist={selectedArtist} setSelectedArtist={setSelectedArtist} />
+        </ResizablePanel>
 
-            <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>
+        <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>
 
-            <ResizablePanel minSize={20} defaultSize={60}>
-              <AlbumSection selectedArtist={selectedArtist} libraries={config!.libraries} onAlbumSelected={selectAlbum} coverArtPath={coverArtPath} setSelectedAlbumArtist={setSelectedAlbumArtist}/>
-            </ResizablePanel>
+        <ResizablePanel minSize={20} defaultSize={60}>
+          <AlbumSection albums={albums} selectedArtist={selectedArtist} onAlbumSelected={selectAlbum} setSelectedAlbumArtist={setSelectedAlbumArtist}/>
+        </ResizablePanel>
 
-            <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>
+        <ResizableHandle className={`dark:bg-white border-[1px] dark:border-white`}/>
 
-            <ResizablePanel minSize={20}>
-              <SongSection songs={songList} setPlayQueue={setPlayQueue} setNowPlaying={setNowPlaying} nowPlaying={nowPlaying} selectedAlbumArtist={selectedAlbumArtist}/>
-            </ResizablePanel>
+        <ResizablePanel minSize={20}>
+          <SongSection songs={songList} setPlayQueue={setPlayQueue} setNowPlaying={setNowPlaying} nowPlaying={nowPlaying} selectedAlbumArtist={selectedAlbumArtist}/>
+        </ResizablePanel>
 
-          </ResizablePanelGroup>
-          <NowPlaying directToCurrentAlbum={navigateToCurrentlyPlayingAlbum} libraries={config!.libraries} nowPlaying={nowPlaying} playQueue={playQueue} setPlayQueue={setPlayQueue} setNowPlaying={setNowPlaying} coverArtPath={coverArtPath}/>
-        </>
-      )}      
+      </ResizablePanelGroup>
+      <NowPlaying directToCurrentAlbum={navigateToCurrentlyPlayingAlbum} nowPlaying={nowPlaying} playQueue={playQueue} setPlayQueue={setPlayQueue} setNowPlaying={setNowPlaying} />   
     </div>
   )
 }

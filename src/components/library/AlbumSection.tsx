@@ -1,30 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
 import { ScrollArea } from '../ui/scroll-area'
-import { getAlbumList, getAlbumsForArtist } from '@/util/subsonic'
-import { Library } from '@/types/config'
+import {  } from '@/util/subsonic'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import CoverArt from '@/components/library/CoverArt'
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { Album } from '@/types/metadata'
+import { store } from '@/util/config'
+import { getAlbumsForArtist } from '@/util/db';
 
 interface AlbumSectionProps {
+  albums: Album[] | undefined
   selectedArtist?: string
-  libraries: Library[]
   onAlbumSelected: (albumId: string) => void
-  coverArtPath: string
   setSelectedAlbumArtist: Dispatch<SetStateAction<string | undefined>>
 }
 
-export default function AlbumSection({ selectedArtist, libraries, onAlbumSelected, coverArtPath, setSelectedAlbumArtist } : AlbumSectionProps) {
+const coverArtPath = await store.get('coverArtPath') as string
+
+export default function AlbumSection({albums = [], selectedArtist, onAlbumSelected, setSelectedAlbumArtist } : AlbumSectionProps) {
   const [filteredAlbumList, setFilteredAlbumList] = useState<Album[]>([])
   const [selectedAlbum, setSelectedAlbum] = useState<string | undefined>(undefined)
-  const { isPending, error, data: albums } = useQuery({queryKey: ['albumList'], queryFn: () => getAlbumList(libraries), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
 
   useEffect(() => {
     async function getAlbums() {
       console.log("Selected Artist: ", selectedArtist)
       if(selectedArtist){
-        setFilteredAlbumList(await getAlbumsForArtist(libraries, selectedArtist))
+        setFilteredAlbumList(await getAlbumsForArtist(selectedArtist))
+        console.log("Filtered Album List: ", filteredAlbumList)
       }else{
         setFilteredAlbumList([])
       }
@@ -32,9 +33,11 @@ export default function AlbumSection({ selectedArtist, libraries, onAlbumSelecte
     getAlbums()
   }, [selectedArtist])
 
-  if (isPending) return <div>Loading...</div>
-
-  if (error) return <div>Error: {error.message}</div>
+  useEffect(() => {
+    if(selectedAlbum){
+      onAlbumSelected(selectedAlbum)
+    }
+  }, [selectedAlbum])
 
   function albumSelected(album: Album) {
     setSelectedAlbum(album.id)
