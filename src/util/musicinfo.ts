@@ -1,10 +1,12 @@
 /* Contains functions related to cover art and extra info for artists and albums */
 import { exists, mkdir, BaseDirectory, writeFile } from '@tauri-apps/plugin-fs';
-import { Album } from '@/types/metadata'
+import { Album, AlbumArtist, Song } from '@/types/metadata'
 import { Library } from '@/types/config';
-import { getIndexes } from './subsonic';
+import { getAlbumDetail, getAlbumsForArtist, getIndexes } from './subsonic';
 
 const ALBUM_ART_CONCURRENCY_LIMIT = 20
+const ALBUM_CONCURRENCY_LIMIT = 20
+const SONG_CONCURRENCY_LIMIT = 20
 
 export async function getAlbumCovers(libraries: Library[], albums: Album[], full: boolean) : Promise<boolean> {
   try{
@@ -58,27 +60,6 @@ async function getAlbumCover(library: Library, album: Album) : Promise<Map<strin
   return new Map<string, ArrayBuffer>().set(album.id, data)
 }
 
-export async function syncLibraries(libraries: Library[]) {
-  try{
-    for (const library of libraries) {
-      if(library.type === 'remote'){
-        //Get indexed list (based on last sync date)
-        let modifiedArtists = await getIndexes(library)
-        console.log('Modified Artists: ', modifiedArtists)
-
-        //Get artist list
-        //TODO: If "albumCount" is 0, should we delete from db?
-
-        //Get album list for artist
-
-        //Get song list for album
-      }
-    }
-  }catch(e){
-    console.log('Error syncing libraries: ', e)
-  }
-}
-
 export async function syncAlbumArt() {
   try{
     //Create the cover art directory if it doesn't exist
@@ -90,5 +71,73 @@ export async function syncAlbumArt() {
 
   }catch(e){
     console.log('Error syncing album art: ', e)
+  }
+}
+
+export async function getAlbumsForMultipleArtists(artists: AlbumArtist[]) : Promise<Album[]> {
+  try{
+    let albumList: Album[] = []
+    const albumPromises: Promise<any>[] = [];
+
+    // Helper function to process promises with concurrency limit
+    const processQueue = async () => {
+      while (albumPromises.length) {
+          const promisesBatch = albumPromises.splice(0, ALBUM_CONCURRENCY_LIMIT);
+          const albums: Album[][] = await Promise.all(promisesBatch);
+          for (const albumArray of albums) {
+            for (const album of albumArray) {
+              albumList.push(album as Album)
+            }
+          }
+      }
+    };
+
+    // Create promises for fetching albums for each artist
+    artists.forEach(artist => {
+        if(artist.albumCount === 0) return;
+        const promise = getAlbumsForArtist(artist.id);
+        albumPromises.push(promise);
+    });
+
+    // Process promises with concurrency limit
+    await processQueue();
+
+    return albumList
+  }catch(e){
+    console.log('Error getting albums for multiple artists: ', e)
+    return []
+  }
+}
+
+export async function getSongsForMultipleAlbums(albums: Album[]) : Promise<Song[]> {
+  let songList: Song[] = []
+  const songPromises: Promise<any>[] = [];
+  try{
+     // Helper function to process promises with concurrency limit
+     const processQueue = async () => {
+      while (songPromises.length) {
+          const promisesBatch = songPromises.splice(0, SONG_CONCURRENCY_LIMIT);
+          const songs: Song[][] = await Promise.all(promisesBatch);
+          for (const songArray of songs) {
+            for (const song of songArray) {
+              songList.push(song as Song)
+            }
+          }
+      }
+    };
+
+    // Create promises for fetching songs for each album
+    for (const album of albums) {
+      const promise = getAlbumDetail(album.id);
+      songPromises.push(promise)
+    }
+
+    // Process promises with concurrency limit
+    await processQueue();
+
+    return songList
+  }catch(e){
+    console.log('Error getting songs for multiple albums: ', e)
+    return []
   }
 }

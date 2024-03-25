@@ -36,12 +36,8 @@ export async function getAlbumList() : Promise<Album[]> {
     let host = library.connectionDetails.host + (library.connectionDetails.port ? `:${library.connectionDetails.port}` : '');
     let connectionString = `${host}/rest/getAlbumList2.view?type=frequent&size=500&offset=${offset}&u=${library.connectionDetails.username}&t=${library.connectionDetails.md5}&s=${library.connectionDetails.salt}&v=1.16.1&c=tauri&f=json`;
 
-    console.log('Connection String: ', connectionString);
-
     const res = await fetch(connectionString);
     const data = await res.json();
-
-    console.log("Data: ", data);
 
     data['subsonic-response'].albumList2.album.forEach((album: any) => {
       albumList.push(album);
@@ -50,8 +46,7 @@ export async function getAlbumList() : Promise<Album[]> {
 
   //If cover art directory doesn't exist, create it and populate it
   getAlbumCovers(libraries, albumList, true);
-
-  console.log("Album List: ", albumList)
+  
   return albumList;
 }
 
@@ -75,7 +70,6 @@ export async function getAlbumsForArtist(artistId: string) : Promise<Album[]> {
   //If art doesn't exists for the albums, get them
   let coverChecks = await Promise.all(albumList.map(async (album) => {
     let artExists = await exists(`cover_art/${album.id}.png`, { baseDir: BaseDirectory.AppLocalData });
-    console.log("Art exists? ", artExists)
     return { album, artExists };
   }));
 
@@ -83,7 +77,6 @@ export async function getAlbumsForArtist(artistId: string) : Promise<Album[]> {
 
 
   if (coversToRetrieve.length > 0) {
-    console.log("Covers to Retrieve: ", coversToRetrieve)
     getAlbumCovers(libraries, coversToRetrieve, false);
   }
 
@@ -94,7 +87,6 @@ export async function getAlbumsForArtist(artistId: string) : Promise<Album[]> {
     return 0;
   });
 
-  console.log("Artist Albums: ", albumList)
   return albumList;
 }
 
@@ -115,7 +107,6 @@ export async function getAlbumDetail(albumId: string) : Promise<Song[]> {
     });
   }));
 
-  console.log("Song List: ", songList)
   return songList;
 }
 
@@ -158,8 +149,7 @@ export async function getIndexes(library: Library) : Promise<AlbumArtist[]> {
   if(library.type === 'local') return [];
   let modifiedArtists: AlbumArtist[] = []
 
-  //TODO: Get "lastSynced" from store; for now, just use default
-  let lastSynced = 0;
+  let lastSynced = await store.get('lastSync') as number || 0;
 
   let host = library.connectionDetails.host + (library.connectionDetails.port ? `:${library.connectionDetails.port}` : '');
   let connectionString = `${host}/rest/getIndexes.view?u=${library.connectionDetails.username}&t=${library.connectionDetails.md5}&s=${library.connectionDetails.salt}&v=1.16.1&c=tauri&f=json&ifModifiedSince=${lastSynced}`;
@@ -168,6 +158,7 @@ export async function getIndexes(library: Library) : Promise<AlbumArtist[]> {
   const data = await res.json()
 
   //Return list of modified artists (if any)
+  if(data['subsonic-response'].indexes.lastModified <= lastSynced) return modifiedArtists;
   data['subsonic-response'].indexes.index.forEach((letterIndex: any) => {
     letterIndex.artist.forEach((artist: any) => {
       modifiedArtists.push(artist as AlbumArtist);
