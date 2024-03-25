@@ -1,11 +1,11 @@
-import { useQuery } from '@tanstack/react-query'
 import { ScrollArea } from '../ui/scroll-area'
-import { getAlbumList, getAlbumsForArtist } from '@/util/subsonic'
+import {  } from '@/util/subsonic'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import CoverArt from '@/components/library/CoverArt'
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { Album } from '@/types/metadata'
 import { store } from '@/util/config'
+import { getAlbumsForArtist } from '@/util/db';
 
 interface AlbumSectionProps {
   albums: Album[] | undefined
@@ -16,7 +16,7 @@ interface AlbumSectionProps {
 
 const coverArtPath = await store.get('coverArtPath') as string
 
-export default function AlbumSection({albums, selectedArtist, onAlbumSelected, setSelectedAlbumArtist } : AlbumSectionProps) {
+export default function AlbumSection({albums = [], selectedArtist, onAlbumSelected, setSelectedAlbumArtist } : AlbumSectionProps) {
   const [filteredAlbumList, setFilteredAlbumList] = useState<Album[]>([])
   const [selectedAlbum, setSelectedAlbum] = useState<string | undefined>(undefined)
 
@@ -25,6 +25,7 @@ export default function AlbumSection({albums, selectedArtist, onAlbumSelected, s
       console.log("Selected Artist: ", selectedArtist)
       if(selectedArtist){
         setFilteredAlbumList(await getAlbumsForArtist(selectedArtist))
+        console.log("Filtered Album List: ", filteredAlbumList)
       }else{
         setFilteredAlbumList([])
       }
@@ -37,8 +38,6 @@ export default function AlbumSection({albums, selectedArtist, onAlbumSelected, s
       onAlbumSelected(selectedAlbum)
     }
   }, [selectedAlbum])
-
-  if (!albums) return <div>Loading...</div>
 
   function albumSelected(album: Album) {
     setSelectedAlbum(album.id)

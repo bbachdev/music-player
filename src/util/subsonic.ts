@@ -25,7 +25,10 @@ export async function getArtistList() : Promise<AlbumArtist[]> {
   return artistList;
 }
 
+//As of 3-25: Updated to only retrieve sync has happened at least once
 export async function getAlbumList() : Promise<Album[]> {
+  const lastSync = await store.get('lastSync') as number;
+  if (!lastSync) return [];
   const libraries = await store.get('libraries') as Library[];
   const albumList: Album[] = []
   await Promise.all(libraries.map(async (library) => {
