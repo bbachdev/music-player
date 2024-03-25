@@ -22,10 +22,8 @@ export default function AlbumSection({albums = [], selectedArtist, onAlbumSelect
 
   useEffect(() => {
     async function getAlbums() {
-      console.log("Selected Artist: ", selectedArtist)
       if(selectedArtist){
         setFilteredAlbumList(await getAlbumsForArtist(selectedArtist))
-        console.log("Filtered Album List: ", filteredAlbumList)
       }else{
         setFilteredAlbumList([])
       }
