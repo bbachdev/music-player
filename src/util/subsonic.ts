@@ -73,6 +73,9 @@ export async function getAlbumsForArtist(artistId: string) : Promise<Album[]> {
   //If art doesn't exists for the albums, get them
   let coverChecks = await Promise.all(albumList.map(async (album) => {
     let artExists = await exists(`cover_art/${album.id}.png`, { baseDir: BaseDirectory.AppLocalData });
+    if(album.id === 'undefined' || album.id === undefined){
+      artExists = true
+    }
     return { album, artExists };
   }));
 
@@ -80,7 +83,7 @@ export async function getAlbumsForArtist(artistId: string) : Promise<Album[]> {
 
 
   if (coversToRetrieve.length > 0) {
-    getAlbumCovers(libraries, coversToRetrieve, false);
+    await getAlbumCovers(libraries, coversToRetrieve, false);
   }
 
   //Sort by year
