@@ -76,7 +76,7 @@ export default function Library() {
   return (
     <div className={`flex flex-col w-full h-[stretch] max-h-screen`}>
       <Header syncStatus={syncStatus}/>
-      <ResizablePanelGroup direction="horizontal">
+      <ResizablePanelGroup className={`flex-1`} direction="horizontal">
 
         <ResizablePanel minSize={20}>
           <ArtistSection artistList={artistList} selectedArtist={selectedArtist} setSelectedArtist={setSelectedArtist} />
