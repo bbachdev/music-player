@@ -8,6 +8,7 @@ import { Album } from '@/types/metadata'
 import { store } from '@/util/config'
 
 interface AlbumSectionProps {
+  albums: Album[] | undefined
   selectedArtist?: string
   onAlbumSelected: (albumId: string) => void
   setSelectedAlbumArtist: Dispatch<SetStateAction<string | undefined>>
@@ -15,10 +16,9 @@ interface AlbumSectionProps {
 
 const coverArtPath = await store.get('coverArtPath') as string
 
-export default function AlbumSection({ selectedArtist, onAlbumSelected, setSelectedAlbumArtist } : AlbumSectionProps) {
+export default function AlbumSection({albums, selectedArtist, onAlbumSelected, setSelectedAlbumArtist } : AlbumSectionProps) {
   const [filteredAlbumList, setFilteredAlbumList] = useState<Album[]>([])
   const [selectedAlbum, setSelectedAlbum] = useState<string | undefined>(undefined)
-  const { isPending, error, data: albums } = useQuery({queryKey: ['albumList'], queryFn: () => getAlbumList(), refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false})
 
   useEffect(() => {
     async function getAlbums() {
@@ -38,9 +38,7 @@ export default function AlbumSection({ selectedArtist, onAlbumSelected, setSelec
     }
   }, [selectedAlbum])
 
-  if (isPending) return <div>Loading...</div>
-
-  if (error) return <div>Error: {error.message}</div>
+  if (!albums) return <div>Loading...</div>
 
   function albumSelected(album: Album) {
     setSelectedAlbum(album.id)
