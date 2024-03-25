@@ -14,7 +14,7 @@ export default function Header({syncStatus}: HeaderProps) {
           <div className={`flex flex-row items-center justify-center gap-2`}>
             <Spinner className={`mt-2`} size={18}/>
             <span>
-              {syncStatus===1 ? 'Syncing Collection...' : 'Syncing Album Art...'}
+              Syncing Collection...
             </span>
           </div>
         </div>
