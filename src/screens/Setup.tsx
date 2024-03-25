@@ -30,6 +30,8 @@ export default function Setup() {
     Object.entries(config)
     .forEach(async ([key, value]) => await store.set(key, value))
 
+    //TODO: For remote md5/salt, use Stronghold instead (https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/stronghold)
+
     //Get cover art path
     let path = await appLocalDataDir() + '/cover_art'
     await store.set('coverArtPath', path)
