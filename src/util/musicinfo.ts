@@ -2,7 +2,7 @@
 import { exists, mkdir, BaseDirectory, writeFile } from '@tauri-apps/plugin-fs';
 import { Album, AlbumArtist, Song } from '@/types/metadata'
 import { Library } from '@/types/config';
-import { getAlbumDetail, getAlbumsForArtist, getIndexes } from './subsonic';
+import { getAlbumDetail, getAlbumsForArtist } from './subsonic';
 
 const ALBUM_ART_CONCURRENCY_LIMIT = 20
 const ALBUM_CONCURRENCY_LIMIT = 20

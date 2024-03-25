@@ -1,6 +1,6 @@
 import { Library } from '@/types/config';
 import { AlbumArtist, Album, Song } from '@/types/metadata';
-import { BaseDirectory, mkdir, exists } from '@tauri-apps/plugin-fs';
+import { BaseDirectory, exists } from '@tauri-apps/plugin-fs';
 import { getAlbumCovers } from '@/util/musicinfo';
 import { store } from '@/util/config';
 

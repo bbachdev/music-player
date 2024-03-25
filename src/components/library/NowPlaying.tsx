@@ -29,7 +29,7 @@ interface NowPlayingProps {
 const coverArtPath = await store.get('coverArtPath') as string
 
 export default function NowPlaying({ nowPlaying, setNowPlaying, playQueue, directToCurrentAlbum, setPlayQueue }: NowPlayingProps) {
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const [_hasLoaded, setHasLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState('0:00');
   const [duration, setDuration] = useState('0:00');
