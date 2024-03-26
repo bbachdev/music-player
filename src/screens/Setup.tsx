@@ -7,7 +7,8 @@ import WelcomeStep from '@/components/setup/WelcomeStep';
 import { Config } from '@/types/config';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { appLocalDataDir } from '@tauri-apps/api/path';
+import { BaseDirectory, appLocalDataDir } from '@tauri-apps/api/path';
+import { exists, mkdir } from '@tauri-apps/plugin-fs';
 
 export default function Setup() {
   const { theme } = useTheme()
@@ -33,6 +34,9 @@ export default function Setup() {
     //TODO: For remote md5/salt, use Stronghold instead (https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/stronghold)
 
     //Get cover art path
+    if(!await exists('cover_art', {baseDir: BaseDirectory.AppLocalData})){
+      await mkdir('cover_art', {baseDir: BaseDirectory.AppLocalData})
+    }
     let path = await appLocalDataDir() + '/cover_art'
     await store.set('coverArtPath', path)
    
