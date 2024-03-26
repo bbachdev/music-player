@@ -74,7 +74,7 @@ export default function Library() {
   }
   
   return (
-    <div className={`flex flex-col w-full h-[stretch] max-h-screen`}>
+    <div className={`flex flex-col w-full h-screen max-h-screen`}>
       <Header syncStatus={syncStatus}/>
       <ResizablePanelGroup className={`flex-1`} direction="horizontal">
 
