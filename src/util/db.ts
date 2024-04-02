@@ -15,12 +15,12 @@ export async function saveLibraryDetails(libaries: Library[]) {
     for (const library of libaries) {
       if(library.type === 'local'){
         await db.execute(
-          "INSERT into libraries (id, name, type, path) VALUES ($1, $2, $3, $4)",
+          "INSERT OR IGNORE into libraries (id, name, type, path) VALUES ($1, $2, $3, $4)",
           [library.id, library.name, library.path, library.path]
         );
       }else{
         await db.execute(
-          "INSERT into libraries (id, name, type, host, port, username, md5, salt) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+          "INSERT OR IGNORE into libraries (id, name, type, host, port, username, md5, salt) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
           [library.id, library.name, library.type, library.connectionDetails.host, library.connectionDetails.port, library.connectionDetails.username, library.connectionDetails.md5, library.connectionDetails.salt]
         );
       } 
@@ -75,7 +75,7 @@ export async function saveModifiedArtists(artists: AlbumArtist[]) {
         console.log('Duplicate Artist ID: ', artist)
       }
       artistIds.add(artist.id)
-      await db.execute(`INSERT INTO artists (id, name, coverArt) VALUES ($1, $2, $3)`, [artist.id, artist.name, artist.coverArt])
+      await db.execute(`INSERT OR IGNORE INTO artists (id, name, coverArt) VALUES ($1, $2, $3)`, [artist.id, artist.name, artist.coverArt])
     }
   }catch(e) {
     console.error(`DB: Error saving modified artists: `, e)
@@ -97,7 +97,7 @@ export async function saveAlbums(albums: Album[]) {
   try{
     const db = await connect();
     for (const album of albums) {
-      await db.execute(`INSERT INTO albums (id, parent, album, title, name, isDir, coverArt, songCount, created, duration, playCount, artistId, artist, year, genre) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`, [album.id, album.parent, album.album, album.title, album.name, album.isDir, album.coverArt, album.songCount, album.created, album.duration, album.playCount, album.artistId, album.artist, album.year, album.genre])
+      await db.execute(`INSERT OR IGNORE INTO albums (id, parent, album, title, name, isDir, coverArt, songCount, created, duration, playCount, artistId, artist, year, genre) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`, [album.id, album.parent, album.album, album.title, album.name, album.isDir, album.coverArt, album.songCount, album.created, album.duration, album.playCount, album.artistId, album.artist, album.year, album.genre])
     }
   }catch(e) {
     console.error(`DB: Error saving albums: `, e)
@@ -129,7 +129,7 @@ export async function saveSongs(songs: Song[]) {
   try{
     const db = await connect();
     for (const song of songs) {
-      await db.execute(`INSERT INTO songs (id, parent, title, isDir, isVideo, type, albumId, album, artist, coverArt, duration, bitRate, track, year, genre, size, discNumber, suffix, contentType, path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`, [song.id, song.parent, song.title, song.isDir, song.isVideo, song.type, song.albumId, song.album, song.artist, song.coverArt, song.duration, song.bitRate, song.track, song.year, song.genre, song.size, song.discNumber, song.suffix, song.contentType, song.path])
+      await db.execute(`INSERT OR IGNORE INTO songs (id, parent, title, isDir, isVideo, type, albumId, album, artist, coverArt, duration, bitRate, track, year, genre, size, discNumber, suffix, contentType, path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`, [song.id, song.parent, song.title, song.isDir, song.isVideo, song.type, song.albumId, song.album, song.artist, song.coverArt, song.duration, song.bitRate, song.track, song.year, song.genre, song.size, song.discNumber, song.suffix, song.contentType, song.path])
     }
   }catch(e) {
     console.error(`DB: Error saving songs: `, e)
