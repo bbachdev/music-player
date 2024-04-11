@@ -20,7 +20,6 @@ In its current iteration, the Rust-specific implementation is fairly simple; it 
 * Simple Light/Dark mode
 
 ## WIP (and Future Features)
-* Auto-Sync of libraries
 * Support for multiple Subsonic libraries
 * Support for local file libraries
 * Download server tracks for offline functionality
