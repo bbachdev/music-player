@@ -3,10 +3,11 @@ import { FaSyncAlt } from "react-icons/fa";
 import Spinner from '../ui/spinner';
 
 interface HeaderProps {
+  initiateSync: () => void
   syncStatus: number
 }
 
-export default function Header({syncStatus}: HeaderProps) {
+export default function Header({syncStatus, initiateSync}: HeaderProps) {
   return (
     <>
       {syncStatus!==0 && (
@@ -23,7 +24,7 @@ export default function Header({syncStatus}: HeaderProps) {
         <img src='/tauri.svg' alt='logo' className={`w-10 h-10`}/>
         <div className={`ml-auto flex flex-row items-center gap-6`}>
           <button title="Force Sync">
-            <FaSyncAlt className={`w-6 h-6`}/>
+            <FaSyncAlt className={`w-6 h-6`} onClick={initiateSync}/>
           </button>
           <button title="Settings">
             <FaGear className={`w-6 h-6`}/>

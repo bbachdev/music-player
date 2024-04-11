@@ -31,7 +31,7 @@ export default function Library() {
       let libraries = await store.get('libraries') as UserLibrary[]
       for (const library of libraries) {
         if(library.type === 'remote'){
-          let modifiedArtists = await getIndexes(library)
+          let modifiedArtists = await getIndexes(library, false)
           console.log('Modified Artists: ', modifiedArtists)
           if(modifiedArtists.length > 0){
             setSyncStatus(1)
@@ -63,6 +63,43 @@ export default function Library() {
     sync()
   }, [])
 
+  async function triggerSync() {
+    setSyncStatus(1)
+    //TODO: Put code in reusable function
+    let libraries = await store.get('libraries') as UserLibrary[]
+      for (const library of libraries) {
+        if(library.type === 'remote'){
+          let modifiedArtists = await getIndexes(library, true)
+          console.log('Modified Artists: ', modifiedArtists)
+          if(modifiedArtists.length > 0){
+            setSyncStatus(1)
+            //Save the modified artists to the database (any new artists)
+            await saveModifiedArtists(modifiedArtists)
+            //TODO: If "albumCount" is 0, should we delete from db?
+
+            //Grab albums for each artist
+            let albumList: Album[] = await getAlbumsForMultipleArtists(modifiedArtists)
+            await saveAlbums(albumList)
+
+            //Grab songs for each album
+            let songList: Song[] = await getSongsForMultipleAlbums(albumList)
+            await saveSongs(songList)
+
+            //Set "modified" timestamp
+            await store.set('lastSync', new Date().getTime())
+
+            //Retrieve the updated lists
+            refetchArtists()
+            refetchAlbums()
+
+            //Finish sync
+            setSyncStatus(0)
+          }
+        }
+      }
+    setSyncStatus(0)
+  }
+
   async function selectAlbum(albumId: string) {
     console.log('Selected Album: ', albumId)
     setSongList(await getAlbumDetail(albumId))
@@ -75,7 +112,7 @@ export default function Library() {
   
   return (
     <div className={`flex flex-col w-full h-screen max-h-screen`}>
-      <Header syncStatus={syncStatus}/>
+      <Header syncStatus={syncStatus} initiateSync={async () => triggerSync()}/>
       <ResizablePanelGroup className={`flex-1`} direction="horizontal">
 
         <ResizablePanel minSize={20}>

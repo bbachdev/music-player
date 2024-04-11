@@ -151,20 +151,24 @@ export async function scrobble(songId: string) : Promise<boolean> {
   return data['subsonic-response'].status === 'ok';
 }
 
-export async function getIndexes(library: Library) : Promise<AlbumArtist[]> {
+export async function getIndexes(library: Library, override: boolean) : Promise<AlbumArtist[]> {
+  console.log("Get Indexes")
   if(library.type === 'local') return [];
   let modifiedArtists: AlbumArtist[] = []
 
   let lastSynced = await store.get('lastSync') as number || 0;
 
   let host = library.connectionDetails.host + (library.connectionDetails.port ? `:${library.connectionDetails.port}` : '');
-  let connectionString = `${host}/rest/getIndexes.view?u=${library.connectionDetails.username}&t=${library.connectionDetails.md5}&s=${library.connectionDetails.salt}&v=1.16.1&c=tauri&f=json&ifModifiedSince=${lastSynced}`;
+  let connectionString = `${host}/rest/getIndexes.view?u=${library.connectionDetails.username}&t=${library.connectionDetails.md5}&s=${library.connectionDetails.salt}&v=1.16.1&c=tauri&f=json`;
+  connectionString += (override === false) ? `&ifModifiedSince=${lastSynced}` : ``;
 
+  console.log("Connection String: ", connectionString)
   const res = await fetch(connectionString);
   const data = await res.json()
 
   //Return list of modified artists (if any)
-  if(data['subsonic-response'].indexes.lastModified <= lastSynced) return modifiedArtists;
+  // if(data['subsonic-response'].indexes.lastModified <= lastSynced) return modifiedArtists;
+  console.log("Data: ", data['subsonic-response'])
   data['subsonic-response'].indexes.index.forEach((letterIndex: any) => {
     letterIndex.artist.forEach((artist: any) => {
       modifiedArtists.push(artist as AlbumArtist);

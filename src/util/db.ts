@@ -85,7 +85,7 @@ export async function saveModifiedArtists(artists: AlbumArtist[]) {
 export async function getArtistList() : Promise<AlbumArtist[]> {
   try{
     const db = await connect();
-    return await db.select("SELECT * FROM artists") as AlbumArtist[];
+    return await db.select("SELECT * FROM artists ORDER BY name ASC") as AlbumArtist[];
   }catch(e) {
     console.error(`DB: Error getting artists: `, e)
     return []
