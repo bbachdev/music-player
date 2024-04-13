@@ -85,7 +85,7 @@ export async function saveModifiedArtists(artists: AlbumArtist[]) {
 export async function getArtistList() : Promise<AlbumArtist[]> {
   try{
     const db = await connect();
-    return await db.select("SELECT * FROM artists ORDER BY name ASC") as AlbumArtist[];
+    return await db.select("SELECT * FROM artists ORDER BY name COLLATE NOCASE ASC") as AlbumArtist[];
   }catch(e) {
     console.error(`DB: Error getting artists: `, e)
     return []
@@ -117,7 +117,7 @@ export async function getAlbumList() : Promise<Album[]> {
 export async function getAlbumsForArtist(artistId: string) : Promise<Album[]> {
   try{
     const db = await connect();
-    return await db.select("SELECT * FROM albums WHERE artistId = $1 ORDER BY year DESC", [artistId]) as Album[];
+    return await db.select("SELECT * FROM albums WHERE artistId = $1 ORDER BY year COLLATE NOCASE DESC", [artistId]) as Album[];
   }catch(e) {
     console.error(`DB: Error getting albums for artist: `, e)
     return []
