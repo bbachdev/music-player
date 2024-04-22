@@ -19,10 +19,15 @@ export default function SongSection({ songs, setPlayQueue, setNowPlaying, nowPla
   useEffect(() => {
     if(songs.length > 0){
       setHeader(songs[0].album)
+      let subHeader: string = ''
       if(selectedAlbumArtist) {
-        setSubHeader(selectedAlbumArtist)
+        subHeader = `${selectedAlbumArtist}`
+        if(songs[0].year) subHeader += ` - (${songs[0].year.toString()})`
+        setSubHeader(subHeader)
         let durationSeconds = songs.reduce((acc, song) => acc + song.duration, 0)
         setTotalDuration(new Date(durationSeconds * 1000).toISOString().slice(11, 19).replace(/^00:/, ''))
+      }else {
+        if(songs[0].year) setSubHeader(`(${songs[0].year.toString()})`)
       }
     }
   }, [songs])
