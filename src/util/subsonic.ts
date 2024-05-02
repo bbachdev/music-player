@@ -167,7 +167,8 @@ export async function getIndexes(library: Library, override: boolean) : Promise<
   const data = await res.json()
 
   //Return list of modified artists (if any)
-  // if(data['subsonic-response'].indexes.lastModified <= lastSynced) return modifiedArtists;
+  // TODO: See why ifModifiedSince is not working; result shouldn't be returned
+  if(data['subsonic-response'].indexes.lastModified <= lastSynced) return modifiedArtists;
   console.log("Data: ", data['subsonic-response'])
   data['subsonic-response'].indexes.index.forEach((letterIndex: any) => {
     letterIndex.artist.forEach((artist: any) => {
