@@ -34,7 +34,7 @@ export default function Library() {
           let modifiedArtists = await getIndexes(library, false)
           console.log('Modified Artists: ', modifiedArtists)
           if(modifiedArtists.length > 0){
-            setSyncStatus(1)
+            //setSyncStatus(1)
             //Save the modified artists to the database (any new artists)
             await saveModifiedArtists(modifiedArtists)
             //TODO: If "albumCount" is 0, should we delete from db?
@@ -55,7 +55,7 @@ export default function Library() {
             refetchAlbums()
 
             //Finish sync
-            setSyncStatus(0)
+            //setSyncStatus(0)
           }
         }
       }
