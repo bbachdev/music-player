@@ -6,7 +6,7 @@
 "Music Player" is a desktop music player that is built to support playback from Subsonic-compatible servers, as well as a user's local music directories (local music functionality is still a WIP).
 
 ## Tech Stack
-![Tech Stack](https://skillicons.dev/icons?i=tauri,react,vite,tailwind)
+![Tech Stack](https://skillicons.dev/icons?i=tauri,ts,react,vite,tailwind)
 
 This project uses the 2.0 version of Tauri (currently in beta), and on the front-end utilizes modern React libraries such as Tanstack Query and Tanstack Router. The UI is based around Shadcn + Tailwind-friendly components, with minor manual CSS adjustments to account for more complex layouts (e.g. album grid).
 
